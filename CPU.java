@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class CPU {
+    private boolean running;
     Scanner sc =new Scanner(System.in);
 
     //64 bit RAM
@@ -25,5 +26,12 @@ public class CPU {
     public String encode(int input){
         String hex = Integer.toHexString(input);
         return hex;
+    }
+
+    public CPU(String[] memory){
+        running = false;
+        //Copying the first 8 hex instructions into RAM
+        System.arraycopy(memory,0,RAM,0,7);
+        PC = 0;
     }
 }
