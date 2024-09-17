@@ -5,7 +5,7 @@ public class CPU {
     Scanner sc =new Scanner(System.in);
 
     //64 bit RAM
-    private String[] RAM = new String[8];
+    private String[] RAM = new String[128];
 
     //16 registers
     private String[] registers = new String[16];
