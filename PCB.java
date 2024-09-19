@@ -1,4 +1,3 @@
-
 public class PCB {
     String[] instructionList;
     int instructLength;
@@ -14,7 +13,7 @@ public class PCB {
         this.inputLength = inputLength;
         this.outputBuffer = outputBuffer;
         this.outputLength = outputLength;
-    }
+    } //PCB Constructor
 
     public String getLine (int line) {
         return instructionList[line];
@@ -40,5 +39,5 @@ public class PCB {
 
     public int getLength() {
         return instructLength + inputLength + outputLength;
-    }
+    } // returns length for long term storage
 }
