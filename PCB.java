@@ -8,8 +8,9 @@ public class PCB {
     int outputLength;
     String[] tempBuffer;
     int tempLength;
-    public PCB (String[] instructionList, int instructLength, int priority, String[] inputBuffer, int inputLength, String[] outputBuffer, int outputLength, int tempLength) {
+    public PCB (String[] instructionList, int instructLength, int priority, String[] inputBuffer, int inputLength, int outputLength, int tempLength) {
         this.instructionList = instructionList;
+        this.instructLength = instructLength;
         this.priority = priority;
         this.inputBuffer = inputBuffer;
         this.inputLength = inputLength;
