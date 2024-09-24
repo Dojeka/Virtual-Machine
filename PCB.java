@@ -44,6 +44,9 @@ public class PCB {
     public String[] getOutputBuffer() {
         return outputBuffer;
     } // returns entire outputBuffer
+    public String[] getTempBuffer() {
+        return tempBuffer;
+    } // returns entire tempBuffer
     public String[] getInstructionList() {
         return instructionList;
     } // returns entire instructionList
