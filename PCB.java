@@ -23,6 +23,9 @@ public class PCB {
     public String getLine (int line) {
         return instructionList[line];
     }
+    public int getPriority() {
+        return priority;
+    }
     public String getInputLine(int line) {
         return inputBuffer[line];
     }
