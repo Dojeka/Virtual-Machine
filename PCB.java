@@ -6,13 +6,17 @@ public class PCB {
     int inputLength;
     String[] outputBuffer;
     int outputLength;
-    public PCB (String[] instructionList, int instructLength, int priority, String[] inputBuffer, int inputLength, String[] outputBuffer, int outputLength) {
+    String[] tempBuffer;
+    int tempLength;
+    public PCB (String[] instructionList, int instructLength, int priority, String[] inputBuffer, int inputLength, String[] outputBuffer, int outputLength, int tempLength) {
         this.instructionList = instructionList;
         this.priority = priority;
         this.inputBuffer = inputBuffer;
         this.inputLength = inputLength;
-        this.outputBuffer = outputBuffer;
+        this.outputBuffer = new String[outputLength];
         this.outputLength = outputLength;
+        this.tempBuffer = new String[tempLength];
+        this.tempLength = tempLength;
     } //PCB Constructor
 
     public String getLine (int line) {
@@ -24,6 +28,13 @@ public class PCB {
     public void setOutputBuffer(int line, String output) {
         outputBuffer[line] = output;
     }
+    public void setTempBuffer(int line, String output) {
+        outputBuffer[line] = output;
+    }
+    public String getTempLine(int line) {
+        return tempBuffer[line];
+    }
+
 
 
     // returns entire arrays for writing into file or reading in console
