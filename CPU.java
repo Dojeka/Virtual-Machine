@@ -1,19 +1,19 @@
 import java.util.Scanner;
 
 public class CPU {
+    private String inputBuffer;
+    private String outputBuffer;
     private boolean running;
     Scanner sc =new Scanner(System.in);
 
     //64 bit RAM
-    private String[] RAM = new String[1024];
+    static String[] RAM = new String[1024];
 
     //16 registers
     private String[] registers = new String[16];
     //reg-1 zero register
     // reg-0 accumulator
 
-    private String InBuffer;
-    private String OutBuffer;
     private int PC;
 
     //takes hex and translates to base-10
@@ -34,6 +34,17 @@ public class CPU {
         System.arraycopy(memory,0,RAM,0,1023);
         PC = 0;
     }
+
+    public void DMA(int input){
+        switch(input){
+            // read
+            case 0:
+                //get the register and address
+                int regOne = decode(RAM[PC].substring(2,3));
+                int address = decode(RAM[PC].substring(5));
+                
+        }
+    }
     public void run(){
         running =  true;
         while(running){
@@ -42,22 +53,10 @@ public class CPU {
 
             //Here are the opcodes and the instructions associated with them
             switch(op){
+                //DMA read
                 case "CO": DMA(0);
             }
             PC++;
-        }
-    }
-
-    public void DMA(int input){
-        switch(input){
-            case 0:
-                System.out.println("DMA Read instruction encountered");
-
-                break;
-            case 1:
-                System.out.println("DMA Write instruction encountered");
-
-                break;
         }
     }
 }
