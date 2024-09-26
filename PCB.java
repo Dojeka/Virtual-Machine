@@ -79,6 +79,6 @@ public class PCB {
     } // returns entire instructionList
 
     public int getLength() {
-        return instructLength + inputLength + outputLength;
+        return instructLength + inputLength + outputLength + tempLength;
     } // returns length for long term storage
 }
