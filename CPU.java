@@ -34,4 +34,29 @@ public class CPU {
         System.arraycopy(memory,0,RAM,0,7);
         PC = 0;
     }
+    public void run(){
+        running =  true;
+        while(running){
+            //Take the opcode which is the first 2 hex words
+            String op = RAM[PC].substring(0,2);
+
+            //Here are the opcodes and the instructions associated with them
+            switch(op){
+                case "CO": DMA(0);
+            }
+            PC++;
+        }
+    }
+
+    public void DMA(int input){
+        if(input == 0){
+            //Read instruction
+
+            int regOne = decode(RAM[PC].substring(2,3));
+            int regTwo = decode(RAM[PC].substring(3,4));
+            int address = decode(RAM[PC].substring(5));
+
+            if(address > 0){
+
+            }
 }

@@ -41,7 +41,7 @@ public class Loader {
         }
     }
 
-    public static Load() {
+    public static void Load() {
 
 
         String line;
