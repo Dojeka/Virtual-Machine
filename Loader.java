@@ -11,7 +11,7 @@ public class Loader {
     static int inputLength;
     static int outputLength;
     static int tempLength;
-    static PCB[] jobs = new PCB[30];
+    static public PCB[] jobs = new PCB[30];
 
     public static int JobPortion(String line) {
         if (line.contains("JOB")){
@@ -41,7 +41,7 @@ public class Loader {
         }
     }
 
-    public static PCB[] Load() {
+    public static Load() {
 
 
         String line;
@@ -80,7 +80,6 @@ public class Loader {
             throw new RuntimeException(e);
         }
         FinishJob("JOB");
-        return jobs;
     }
 
     // for jobs
