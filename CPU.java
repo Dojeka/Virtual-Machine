@@ -34,4 +34,15 @@ public class CPU {
         System.arraycopy(memory,0,RAM,0,7);
         PC = 0;
     }
+
+
+    //Added by John
+    //Constructor w/ no params
+    public CPU() {
+    }
+
+    //Getter for ram
+    public String[] getRAM() {
+        return RAM;
+    }
 }

@@ -26,11 +26,13 @@ public class Loader {
             inputLength = Integer.parseInt(bufferData[2],16);
             outputLength = Integer.parseInt(bufferData[3],16);
             tempLength = Integer.parseInt(bufferData[4],16);
-
             inputBuffer = new String[inputLength];
             return 1;
         }
         return -1;
+    }
+
+    public Loader() {
     }
 
     public static void FinishJob(String line) {
@@ -78,6 +80,11 @@ public class Loader {
             throw new RuntimeException(e);
         }
         FinishJob("JOB");
+        return jobs;
+    }
+
+    // for jobs
+    public PCB[] getJobs() {
         return jobs;
     }
 }

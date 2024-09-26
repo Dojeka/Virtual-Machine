@@ -8,6 +8,14 @@ public class PCB {
     int outputLength;
     String[] tempBuffer;
     int tempLength;
+
+    //Added by John
+    //Added job info of space in ram to pcb
+    int jobBeginningInRam;
+    int jobEndingInRam;
+    int jobInputBufferStartInRam;
+    int jobOutputBufferStartInRam;
+
     public PCB (String[] instructionList, int instructLength, int priority, String[] inputBuffer, int inputLength, int outputLength, int tempLength) {
         this.instructionList = instructionList;
         this.instructLength = instructLength;
@@ -19,6 +27,19 @@ public class PCB {
         this.tempBuffer = new String[tempLength];
         this.tempLength = tempLength;
     } //PCB Constructor
+
+    //Added by John
+    public PCB() {}
+
+    //Added job info of jobs space in ram to pcb
+    public void setJobBeginningInRam(int jobBeginningInRam) {
+        this.jobBeginningInRam = jobBeginningInRam;
+    }
+    public void setJobEndingInRam(int jobEndingInRam) {
+        this.jobEndingInRam = jobEndingInRam;
+    }
+    public void setJobInputBufferStartInRam(int jobInputBufferStartInRam) {this.jobInputBufferStartInRam = jobInputBufferStartInRam;}
+    public void setJobOutputBufferStartInRam(int jobOutputBufferStartInRam) {this.jobOutputBufferStartInRam = jobOutputBufferStartInRam;}
 
     public String getLine (int line) {
         return instructionList[line];
@@ -38,6 +59,8 @@ public class PCB {
     public String getTempLine(int line) {
         return tempBuffer[line];
     }
+
+
 
 
 
