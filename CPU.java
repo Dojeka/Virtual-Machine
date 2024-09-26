@@ -50,6 +50,7 @@ public class CPU {
             //Here are the opcodes and the instructions associated with them
             switch(op){
                 case "CO": DMA(0);
+                case "4B":  MOVI();
             }
             PC++;
         }
@@ -64,6 +65,9 @@ public class CPU {
             int address = decode(RAM[PC].substring(5));
 
             if(address > 0){
+
+            }
+            public void MOVI(){
 
             }
         }
