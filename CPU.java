@@ -5,7 +5,7 @@ public class CPU {
     Scanner sc =new Scanner(System.in);
 
     //64 bit RAM
-    private String[] RAM = new String[8];
+    private String[] RAM = new String[1024];
 
     //16 registers
     private String[] registers = new String[16];
@@ -31,7 +31,7 @@ public class CPU {
     public CPU(String[] memory){
         running = false;
         //Copying the first 8 hex instructions into RAM
-        System.arraycopy(memory,0,RAM,0,7);
+        System.arraycopy(memory,0,RAM,0,1023);
         PC = 0;
     }
     public void run(){
@@ -49,16 +49,15 @@ public class CPU {
     }
 
     public void DMA(int input){
-        if(input == 0){
-            //Read instruction
+        switch(input){
+            case 0:
+                System.out.println("DMA Read instruction encountered");
 
-            int regOne = decode(RAM[PC].substring(2,3));
-            int regTwo = decode(RAM[PC].substring(3,4));
-            int address = decode(RAM[PC].substring(5));
+                break;
+            case 1:
+                System.out.println("DMA Write instruction encountered");
 
-            if(address > 0){
-
-            }
+                break;
         }
     }
 }
