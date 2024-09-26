@@ -4,83 +4,117 @@ public class CPU {
     private String inputBuffer;
     private String outputBuffer;
     private boolean running;
-    Scanner sc =new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in);
 
-    //64 bit RAM
+    // 64-bit RAM
     static String[] RAM = new String[1024];
 
-    //16 registers
+    // 16 registers
     private String[] registers = new String[16];
-    //reg-1 zero register
-    // reg-0 accumulator
 
-    private int PC;
+    private int PC; // Program Counter
 
-    //takes hex and translates to base-10
-    public int decode(String input){
-        int base = Integer.parseInt(input,16);
-        return base;
-    }
-
-    //takes base-10 and translates to hex
-    public String encode(int input){
-        String hex = Integer.toHexString(input);
-        return hex;
-    }
-
-    public CPU(String[] memory){
+    // Constructor to initialize CPU with provided memory
+    public CPU(String[] memory) {
         running = false;
-        //Copying the first 8 hex instructions into RAM
-        System.arraycopy(memory,0,RAM,0,1023);
+        System.arraycopy(memory, 0, RAM, 0, memory.length);
         PC = 0;
     }
 
-    public void DMA(int input){
-        switch(input){
+    // Get RAM content for inspection
+    public String[] getRAM() {
+        return RAM;
+    }
 
-            // read
-            case 0:
-                //get the registers and address
-                int regOne = decode(RAM[PC].substring(2,3));
-                int regTwo = decode(RAM[PC].substring(3,4));
-                int address = decode(RAM[PC].substring(5));
+    // Decode hex to base-10
+    public int decode(String input) {
+        return Integer.parseInt(input, 16);
+    }
 
-                //Two options for a read depending on if address exists
-                if(address > 0 && address < RAM.length){
-                    inputBuffer = RAM[PC].substring(5);
-                }else{
-                    regOne = regTwo;
+    // Encode base-10 to hex
+    public String encode(int input) {
+        return String.format("%08X", input); // Format to 8 digits
+    }
+
+    // DMA operations
+    public void DMA(int input) {
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+        int address = decode(RAM[PC].substring(5));
+
+        switch (input) {
+            case 0: // Read
+                System.out.println("DMA Read: Getting registers and address.");
+                if (address >= 0 && address < RAM.length) {
+                    System.out.println("Transferring from memory to input buffer...");
+                    inputBuffer = RAM[address]; // Read from RAM to input buffer
+                    registers[regOne] = inputBuffer; // Store in specified register
+                } else {
+                    System.out.println("Invalid address for read operation.");
                 }
                 break;
-            case 1:
-                //get the registers and address
-                regOne = decode(RAM[PC].substring(2,3));
-                regTwo = decode(RAM[PC].substring(3,4));
-                address = decode(RAM[PC].substring(5));
 
-                //Writes directly to memory through output buffer
-                if(address > 0 && address < RAM.length){
-                    outputBuffer = RAM[PC].substring(5);
-                }else{
-                    System.out.println("Inadequate data to write to memory");
+            case 1: // Write
+                System.out.println("DMA Write: Getting registers and address.");
+                if (address >= 0 && address < RAM.length) {
+                    System.out.println("Transferring from register to memory...");
+                    outputBuffer = registers[regOne]; // Get data from register
+                    RAM[address] = outputBuffer; // Write to RAM at specified address
+                } else {
+                    System.out.println("Invalid address for write operation.");
                 }
+                break;
         }
     }
-    public void run(){
-        running =  true;
-        while(running){
-            //Take the opcode which is the first 2 hex words
-            String op = RAM[PC].substring(0,2);
 
-            //Here are the opcodes and the instructions associated with them
-            switch(op){
-                //DMA read
-                case "CO": DMA(0);
-                        break;
-                case "C1": DMA(1);
-                        break;
+    // Main run loop
+    public void run() {
+        running = true;
+        while (running) {
+            if (PC < 0 || PC >= RAM.length) {
+                System.out.println("Program Counter out of bounds: " + PC);
+                running = false; // Stop execution
+                break;
+            }
+
+            // Fetch the opcode (first 2 hex characters)
+            String op = RAM[PC];
+
+            // Ensure that RAM[PC] is not null
+            if (op == null || op.length() < 2) {
+                System.out.println("Invalid instruction at PC: " + PC);
+                running = false; // Stop execution
+                break;
+            }
+
+            // Fetch the opcode (first 2 hex characters)
+            String opcde = op.substring(0,2);
+            switch (opcde) {
+                case "C0": // DMA Read
+                    DMA(0);
+                    break;
+                case "C1": // DMA Write
+                    DMA(1);
+                    break;
+                case "4B": // MOVI instruction
+                    MOVI();
+                    break;
+                default:
+                    System.out.println("Unknown opcode: " + op);
+                    running = false; // Stop if unknown opcode
+                    break;
             }
             PC++;
         }
+    }
+
+    // MOVI instruction
+    void MOVI() {
+        // Getting registers
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+
+        System.out.println("MOVI: Transferring data into register " + regOne);
+        registers[regOne] = encode(regTwo); // Store the immediate value into the register
     }
 }
