@@ -58,7 +58,7 @@ public class CPU {
                 regTwo = decode(RAM[PC].substring(3,4));
                 address = decode(RAM[PC].substring(5));
 
-                //Two options for a read depending on if address exists
+                //Writes directly to memory through output buffer
                 if(address > 0 && address < RAM.length){
                     outputBuffer = RAM[PC].substring(5);
                 }else{
@@ -76,6 +76,9 @@ public class CPU {
             switch(op){
                 //DMA read
                 case "CO": DMA(0);
+                        break;
+                case "C1": DMA(1);
+                        break;
             }
             PC++;
         }
