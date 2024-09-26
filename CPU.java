@@ -37,12 +37,33 @@ public class CPU {
 
     public void DMA(int input){
         switch(input){
+
             // read
             case 0:
-                //get the register and address
+                //get the registers and address
                 int regOne = decode(RAM[PC].substring(2,3));
+                int regTwo = decode(RAM[PC].substring(3,4));
                 int address = decode(RAM[PC].substring(5));
-                
+
+                //Two options for a read depending on if address exists
+                if(address > 0 && address < RAM.length){
+                    inputBuffer = RAM[PC].substring(5);
+                }else{
+                    regOne = regTwo;
+                }
+                break;
+            case 1:
+                //get the registers and address
+                regOne = decode(RAM[PC].substring(2,3));
+                regTwo = decode(RAM[PC].substring(3,4));
+                address = decode(RAM[PC].substring(5));
+
+                //Two options for a read depending on if address exists
+                if(address > 0 && address < RAM.length){
+                    outputBuffer = RAM[PC].substring(5);
+                }else{
+                    System.out.println("Inadequate data to write to memory");
+                }
         }
     }
     public void run(){
