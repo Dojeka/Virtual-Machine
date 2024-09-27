@@ -101,6 +101,9 @@ public class CPU {
                     break;
                 case "4F": //LDI instruction
                     LDI();
+                case "4C":
+                    ADDI();
+                    break;
                 default:
                     System.out.println("Unknown opcode: " + op);
                     running = false; // Stop if unknown opcode
@@ -120,11 +123,17 @@ public class CPU {
         registers[regOne] = encode(regTwo); // Store the immediate value into the register
     }
     void LDI(){
-        // Getting registers
+        // Getting register and address
         int regOne = decode(RAM[PC].substring(3,4));
         int address = decode(RAM[PC].substring(5));
 
         System.out.println("LDI: Transferring "+ address +" int register: "+ regOne);
         registers[regOne] = encode(address);
+    }
+    void ADDI(){
+        // Getting register and address
+        int regOne = decode(RAM[PC].substring(3,4));
+        int address = decode(RAM[PC].substring(5));
+
     }
 }
