@@ -33,7 +33,7 @@ public class CPU {
 
     // Encode base-10 to hex
     public String encode(int input) {
-        return String.format("%08X", input); // Format to 8 digits
+        return Integer.toHexString(input).toUpperCase(); // Format to hex digits
     }
 
     // DMA operations
@@ -99,6 +99,8 @@ public class CPU {
                 case "4B": // MOVI instruction
                     MOVI();
                     break;
+                case "4F": //LDI instruction
+                    LDI();
                 default:
                     System.out.println("Unknown opcode: " + op);
                     running = false; // Stop if unknown opcode
@@ -114,7 +116,15 @@ public class CPU {
         int regOne = decode(RAM[PC].substring(2, 3));
         int regTwo = decode(RAM[PC].substring(3, 4));
 
-        System.out.println("MOVI: Transferring data into register " + regOne);
+        System.out.println("MOVI: Transferring "+ regTwo +" into register " + regOne);
         registers[regOne] = encode(regTwo); // Store the immediate value into the register
+    }
+    void LDI(){
+        // Getting registers
+        int regOne = decode(RAM[PC].substring(3,4));
+        int address = decode(RAM[PC].substring(5));
+
+        System.out.println("LDI: Transferring "+ address +" int register: "+ regOne);
+        registers[regOne] = encode(address);
     }
 }
