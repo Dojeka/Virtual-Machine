@@ -101,9 +101,35 @@ public class CPU {
                     break;
                 case "4F": //LDI instruction
                     LDI();
-                case "4C":
+                case "4C": //ADDI instruction
                     ADDI();
                     break;
+                case "42":
+                    ST(); //ST instruction
+                    break;
+                case "10":
+                    SLT(); //SLT instruction
+                    break;
+                case "56":
+                    SUB(); //SUB instruction
+                    break;
+                case "43":
+                    LW(); //LW instruction
+                    break;
+                case "05":
+                    ADD(); //ADD instruction
+                    break;
+                case "92":
+                    ST();// ST instruction
+                case "00":
+                    DMA(0); //DMA Read
+                case "55":
+                    ADD(); //ADD instruction
+                    break;
+                case "04":
+                    MOV(); //MOV instruction
+                    break;
+
                 default:
                     System.out.println("Unknown opcode: " + op);
                     running = false; // Stop if unknown opcode
@@ -134,6 +160,23 @@ public class CPU {
         // Getting register and address
         int regOne = decode(RAM[PC].substring(3,4));
         int address = decode(RAM[PC].substring(5));
-
+    }
+    void ST() {
+        //To be implemented
+    }
+    void SLT() {
+        //To be implemented
+    }
+    void SUB() {
+        //To be implemented
+    }
+    void LW() {
+        //To be implemented
+    }
+    void ADD() {
+        //To be implemented
+    }
+    void MOV() {
+        //To be implemented
     }
 }
