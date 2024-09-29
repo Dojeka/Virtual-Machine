@@ -129,6 +129,9 @@ public class CPU {
                 case "04":
                     MOV(); //MOV instruction
                     break;
+                case "08":
+                    DIV(); //DIV instruction
+                    break;
 
                 default:
                     System.out.println("Unknown opcode: " + op);
@@ -177,6 +180,9 @@ public class CPU {
         //To be implemented
     }
     void MOV() {
+        //To be implemented
+    }
+    void DIV() {
         //To be implemented
     }
 }
