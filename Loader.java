@@ -4,14 +4,14 @@ import java.util.Scanner;
 public class Loader {
 
     static int jobNumber = 0;
-    static String[] instructionList;
     static int instructLength;
     static int priority;
-    static String[] inputBuffer;
     static int inputLength;
     static int outputLength;
     static int tempLength;
     static public PCB[] jobs = new PCB[30];
+    static public String[] disk = new String[3000];
+    static int diskCounter = 0;
 
     public static int JobPortion(String line) {
         if (line.contains("JOB")){
@@ -19,14 +19,12 @@ public class Loader {
             jobNumber = Integer.parseInt(jobData[2],16);
             instructLength = Integer.parseInt(jobData[3],16);
             priority = Integer.parseInt(jobData[4],16);
-            instructionList = new String[instructLength];
             return 0;
         } else if (line.contains("Data")) {
             String[] bufferData = line.split(" ");
             inputLength = Integer.parseInt(bufferData[2],16);
             outputLength = Integer.parseInt(bufferData[3],16);
             tempLength = Integer.parseInt(bufferData[4],16);
-            inputBuffer = new String[inputLength];
             return 1;
         }
         return -1;
@@ -37,11 +35,11 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("JOB") & jobNumber != 0) {
-            jobs[jobNumber-1] = new PCB(instructionList, instructLength, priority, inputBuffer, inputLength, outputLength, tempLength);
+            jobs[jobNumber-1] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter);
         }
     }
 
-    public static Load() {
+    public static void Load() {
 
 
         String line;
@@ -61,11 +59,13 @@ public class Loader {
                 } else {
                     switch (readType) {
                         case 0:
-                            instructionList[readCounter] = line.replace("0x","");
+                            disk[diskCounter] = line.replace("0x","");
+                            diskCounter++;
                             readCounter++;
                             break;
                         case 1:
-                            inputBuffer[readCounter] = line.replace("0x","");
+                            disk[diskCounter] = line.replace("0x","");
+                            diskCounter++;
                             readCounter++;
                             if (readCounter >= inputLength) {
                                 readCounter = 0;
@@ -73,6 +73,8 @@ public class Loader {
                             }
                             break;
                         default:
+                            disk[diskCounter] = "00000000";
+                            diskCounter++;
                     }
                 }
             }
@@ -86,4 +88,11 @@ public class Loader {
     public PCB[] getJobs() {
         return jobs;
     }
+
+    public static void main(String[] args) {
+        Load();
+        for (int i = 0; i < disk.length; i++)
+            System.out.println(disk[i]);
+    }
+
 }

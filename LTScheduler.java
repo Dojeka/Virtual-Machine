@@ -34,7 +34,7 @@ public class LTScheduler {
         //first add instructions of jobs to ram
         int j = 0;
         for(int i = nextOpenSpace; i < nextOpenSpace+ job.instructLength; i++){
-            ram[i] = job.instructionList[j];
+            //ram[i] = job.instructionList[j];
             j++;
         }
         nextOpenSpace = nextOpenSpace + job.instructLength+1;
@@ -42,7 +42,7 @@ public class LTScheduler {
         //Add input buffer to ram
         j = 0;
         for (int i = nextOpenSpace; i < nextOpenSpace + job.inputLength; i++) {
-            ram[i] = job.inputBuffer[j];
+            //ram[i] = job.inputBuffer[j];
             j++;
         }
 
