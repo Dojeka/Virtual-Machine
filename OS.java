@@ -4,9 +4,11 @@ public class OS {
     
     public static void main(String[] args) {
         //Loader portion
-
+        Loader.Load();
         //LTScheduler portion
-
+        
         //CPU portion
+        CPU cpu = new CPU(RAM);
+        cpu.run();
     }
 }
