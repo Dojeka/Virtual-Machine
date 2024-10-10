@@ -7,17 +7,18 @@ import javax.naming.InsufficientResourcesException;
 public class Memory {
     //This is a temporary store for any set of instructions.
     String[] instructionSet;
+    //Here is the main storage considered memCore.
     String[] memCore = new String[1024];
     String[] clearCore = new String[1024];
 
     Memory(){
-
     }
 
 //Here the entire memory core is fetched.
     public String[] fetchCore(){
         return memCore;
     }
+
     //This method guarantees that the memCore has space for the data being stored
     //Then the data is copied into the Ram slots as deemed appropriate
     public void store(String[] newData) throws InsufficientResourcesException {
@@ -44,6 +45,8 @@ public class Memory {
 
 
     }
+
+    
     //The Fetch method copies each index of the memCore to a new String array to be returned
     //With each iteration, the index in the memCore is cleared.
     public String[] fetch(int length, int index){
