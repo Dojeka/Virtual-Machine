@@ -3,6 +3,10 @@ public class OS {
     public static String [] RAM = new String[1024];
     
     public static void main(String[] args) {
+        //Loader portion
 
+        //LTScheduler portion
+
+        //CPU portion
     }
 }
