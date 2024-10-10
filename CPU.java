@@ -165,24 +165,90 @@ public class CPU {
         int address = decode(RAM[PC].substring(5));
     }
     void ST() {
-        //To be implemented
+        // Store the value from a register into RAM
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int address = decode(RAM[PC].substring(4, 8));
+
+        System.out.println("ST: Storing register " + regOne + " value into address " + address);
+
+        if (address >= 0 && address < RAM.length) {
+            RAM[address] = registers[regOne];
+        } else {
+            System.out.println("Invalid memory address.");
+        }
     }
+
     void SLT() {
-        //To be implemented
+        // Set Less Than (set register to 1 if one register is less than another)
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+        int regDest = decode(RAM[PC].substring(4, 5));
+
+        System.out.println("SLT: Comparing register " + regOne + " and register " + regTwo);
+        if (Integer.parseInt(registers[regOne]) < Integer.parseInt(registers[regTwo])) {
+            registers[regDest] = "1"; // Set to 1 if regOne < regTwo
+        } else {
+            registers[regDest] = "0"; // Set to 0 otherwise
+        }
     }
+
     void SUB() {
-        //To be implemented
+        // Subtract the value of one register from another and store in the destination register
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+        int regDest = decode(RAM[PC].substring(4, 5));
+
+        System.out.println("SUB: Subtracting register " + regTwo + " from register " + regOne);
+        int result = Integer.parseInt(registers[regOne]) - Integer.parseInt(registers[regTwo]);
+        registers[regDest] = encode(result);
     }
+
     void LW() {
-        //To be implemented
+        // Load Word: Load value from memory into a register
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int address = decode(RAM[PC].substring(4, 8));
+
+        System.out.println("LW: Loading value from address " + address + " into register " + regOne);
+        if (address >= 0 && address < RAM.length) {
+            registers[regOne] = RAM[address];
+        } else {
+            System.out.println("Invalid memory address.");
+        }
     }
+
     void ADD() {
-        //To be implemented
+        // Add the value of two registers and store in the destination register
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+        int regDest = decode(RAM[PC].substring(4, 5));
+
+        System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
+        int result = Integer.parseInt(registers[regOne]) + Integer.parseInt(registers[regTwo]);
+        registers[regDest] = encode(result);
     }
+
     void MOV() {
-        //To be implemented
+        // Move value from one register to another
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+
+        System.out.println("MOV: Moving value from register " + regTwo + " to register " + regOne);
+        registers[regOne] = registers[regTwo];
     }
+
     void DIV() {
-        //To be implemented
+        // Divide the value of one register by another and store in the destination register
+        int regOne = decode(RAM[PC].substring(2, 3));
+        int regTwo = decode(RAM[PC].substring(3, 4));
+        int regDest = decode(RAM[PC].substring(4, 5));
+
+        System.out.println("DIV: Dividing register " + regOne + " by register " + regTwo);
+        if (Integer.parseInt(registers[regTwo]) != 0) {
+            int result = Integer.parseInt(registers[regOne]) / Integer.parseInt(registers[regTwo]);
+            registers[regDest] = encode(result);
+        } else {
+            System.out.println("Error: Division by zero.");
+        }
     }
+
 }
