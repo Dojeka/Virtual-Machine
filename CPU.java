@@ -132,8 +132,7 @@ public class CPU {
                 case "08":
                     DIV(); //DIV instruction
                     break;
-                case "92": HLT();
-                    break;
+
                 default:
                     System.out.println("Unknown opcode: " + op);
                     running = false; // Stop if unknown opcode
@@ -252,7 +251,4 @@ public class CPU {
         }
     }
 
-    void HLT(){
-        running = false;
-    }
 }
