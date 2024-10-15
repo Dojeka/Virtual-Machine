@@ -9,7 +9,7 @@ public class Loader {
     static int inputLength;
     static int outputLength;
     static int tempLength;
-    static public PCB[] jobs = new PCB[30];
+    public static PCB[] jobs = new PCB[30];
     static public String[] disk = new String[3000];
     static int diskCounter = 0;
 

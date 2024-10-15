@@ -4,22 +4,24 @@ import java.util.Comparator;
 public class LTScheduler {
 
 
-    Loader loader = new Loader();
     //int to keep track of the next open index in the ram to insert data into
-    int nextOpenSpace=0;
+    static int nextOpenSpace=0;
     PCBComparator comparator = new PCBComparator();
     static int totalOpenRamSpace = OS.RAM.length;
 
-
-
-    public void LongTermScheduler() {
-        PCB[] jobs = loader.getJobs();
-
+    public void LTSpriorityQueue() {
+        PCB[] jobs = Loader.jobs;
         Arrays.sort(jobs, comparator);
+    }
+
+    public static void LongTermScheduler() {
+        PCB[] jobs = Loader.jobs;
+
 
         String[] ram = OS.RAM;
         int k = 0;
         PCB job = jobs[k];
+
         while(job.getLength() < totalOpenRamSpace && k < jobs.length) {
             job = jobs[k];
             int requiredSpace = job.instructLength + job.inputLength + job.outputLength + job.tempLength;
