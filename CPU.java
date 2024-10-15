@@ -119,10 +119,9 @@ public class CPU {
                 case "05":
                     ADD(); //ADD instruction
                     break;
-                case "92":
-                    ST();// ST instruction
                 case "00":
                     DMA(0); //DMA Read
+                    break;
                 case "55":
                     ADD(); //ADD instruction
                     break;
@@ -163,6 +162,7 @@ public class CPU {
         // Getting register and address
         int regOne = decode(RAM[PC].substring(3,4));
         int address = decode(RAM[PC].substring(5));
+
     }
     void ST() {
         // Store the value from a register into RAM
@@ -220,11 +220,13 @@ public class CPU {
         // Add the value of two registers and store in the destination register
         int regOne = decode(RAM[PC].substring(2, 3));
         int regTwo = decode(RAM[PC].substring(3, 4));
-        int regDest = decode(RAM[PC].substring(4, 5));
+        int regThree = decode(RAM[PC].substring(4,5));
 
-        System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
-        int result = Integer.parseInt(registers[regOne]) + Integer.parseInt(registers[regTwo]);
-        registers[regDest] = encode(result);
+        System.out.println("ADD: Adding register " + regTwo + " and register " + regThree);
+        int result = Integer.parseInt(registers[regTwo]) + Integer.parseInt(registers[regThree]);
+        registers[regOne] = encode(result);
+
+
     }
 
     void MOV() {
@@ -250,5 +252,5 @@ public class CPU {
             System.out.println("Error: Division by zero.");
         }
     }
-
 }
+
