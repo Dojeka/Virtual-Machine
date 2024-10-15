@@ -8,18 +8,20 @@ public class LTScheduler {
     //int to keep track of the next open index in the ram to insert data into
     int nextOpenSpace=0;
     PCBComparator comparator = new PCBComparator();
+    static int totalOpenRamSpace = OS.RAM.length;
 
 
 
-
-    public void LongTermScheduler(){
+    public void LongTermScheduler() {
         PCB[] jobs = loader.getJobs();
 
         Arrays.sort(jobs, comparator);
 
         String[] ram = OS.RAM;
-
-        for (PCB job : jobs) {
+        int k = 0;
+        PCB job = jobs[k];
+        while(job.getLength() < totalOpenRamSpace && k < jobs.length) {
+            job = jobs[k];
             int requiredSpace = job.instructLength + job.inputLength + job.outputLength + job.tempLength;
 
             // Check if there's enough space in RAM before loading the job
@@ -29,7 +31,7 @@ public class LTScheduler {
             }
 
             job.setJobBeginningInRam(nextOpenSpace);
-            job.setJobEndingInRam(nextOpenSpace+job.instructLength-1);
+            job.setJobEndingInRam(nextOpenSpace + job.instructLength - 1);
 
 
             int instructionStartInDisk = job.jobBeginningInDisk;
@@ -42,7 +44,7 @@ public class LTScheduler {
             }
 
 
-            nextOpenSpace+=job.instructLength;
+            nextOpenSpace += job.instructLength;
 
 
             job.setJobInputBufferStartInRam(nextOpenSpace);
@@ -57,7 +59,7 @@ public class LTScheduler {
                     System.out.println("Input Buffer index out of bounds: " + (inputStartInDisk + i));
                 }
             }
-            nextOpenSpace+=job.inputLength;
+            nextOpenSpace += job.inputLength;
 
             //mark the space in ram that the output buffer starts at
 
@@ -65,9 +67,23 @@ public class LTScheduler {
 
             //Add temp buffer space to ram by moving nextOpenSpace (spot where new jobs or data will be added)\
             //over the length of the temp buffer size
-            nextOpenSpace += job.outputLength+job.tempLength;
-        }
+            nextOpenSpace += job.outputLength + job.tempLength;
 
+
+            //Have a variable called total ram space that keeps track of total open indexes in ram that are available
+            //As we add jobs the totalOpenRamSpace will decrease, once we don't have enough space to add to ram the while
+            //Look fails, the Short term schedule will have to update the total open ram space whenever it removes a job
+            totalOpenRamSpace -= job.getLength();
+
+            //Once the next job won't be able to fit in the end of ram,
+            //Set the pointer back to the beginning of ram
+            PCB nextJob = jobs[k+1];
+            if (nextJob.getLength() > ram.length) {
+                nextOpenSpace = 0;
+            }
+            k++;
+
+        }
     }
 
     public static void main(String[] args) {
