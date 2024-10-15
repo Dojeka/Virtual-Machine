@@ -47,7 +47,7 @@ public class Loader {
         int readCounter = 0;
 
         try {
-            File plaintext = new File("./src/30-Jobs");
+            File plaintext = new File("C://Virtual-Machine//30-Jobs");
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();
@@ -91,7 +91,8 @@ public class Loader {
 
     public static void main(String[] args) {
         Load();
-        for (int i = 0; i < disk.length; i++)
+
+       for (int i = 0; i < disk.length; i++)
             System.out.println(disk[i]);
     }
 
