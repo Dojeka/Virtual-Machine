@@ -9,8 +9,8 @@ public class Loader {
     static int inputLength;
     static int outputLength;
     static int tempLength;
-    public static PCB[] jobs = new PCB[30];
-    static public String[] disk = new String[3000];
+    static public PCB[] jobs = new PCB[30];
+    public static String[] disk = new String[3000];
     static int diskCounter = 0;
 
     public static int JobPortion(String line) {
@@ -47,7 +47,7 @@ public class Loader {
         int readCounter = 0;
 
         try {
-            File plaintext = new File("C://Virtual-Machine//30-Jobs");
+            File plaintext = new File("30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();
@@ -95,5 +95,6 @@ public class Loader {
        for (int i = 0; i < disk.length; i++)
             System.out.println(disk[i]);
     }
+
 
 }

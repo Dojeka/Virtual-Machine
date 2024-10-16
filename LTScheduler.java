@@ -8,6 +8,7 @@ public class LTScheduler {
     static int nextOpenSpace=0;
     PCBComparator comparator = new PCBComparator();
     static int totalOpenRamSpace = OS.RAM.length;
+    static int k = 0;
 
     public void LTSpriorityQueue() {
         PCB[] jobs = Loader.jobs;
@@ -19,7 +20,7 @@ public class LTScheduler {
 
 
         String[] ram = OS.RAM;
-        int k = 0;
+
         PCB job = jobs[k];
 
         while(job.getLength() < totalOpenRamSpace && k < jobs.length) {
@@ -83,6 +84,7 @@ public class LTScheduler {
             if (nextJob.getLength() > ram.length) {
                 nextOpenSpace = 0;
             }
+
             k++;
 
         }
