@@ -7,13 +7,14 @@ public class FileWrite{
     public static void OverWrite(){
         Loader.Load();
         PCB [] jobs =  Loader.jobs;
+
         try{
             FileWriter fw = new FileWriter("Test.txt");
 
             BufferedWriter myWriter = new BufferedWriter(fw);
             int k = 0;
             PCB currentJob;
-            
+
             //For loop to iterate over the entire file
             int currentDiskPosition = 0;
 
@@ -40,11 +41,13 @@ public class FileWrite{
                     myWriter.newLine();
                 }
                 currentDiskPosition += (currentJob.getLength() - currentJob.instructLength);
-
+                myWriter.write("//End");
+                myWriter.newLine();
                 k++;
             }
 
             myWriter.close();
+
         }catch (IOException e){
             System.out.println("File not found");
             e.printStackTrace();

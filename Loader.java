@@ -35,7 +35,7 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("JOB") & jobNumber != 0) {
-            jobs[jobNumber-1] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter);
+            jobs[jobNumber-1] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber);
         }
     }
 
