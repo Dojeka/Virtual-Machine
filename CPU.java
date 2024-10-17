@@ -31,7 +31,7 @@ public class CPU {
     }
 
     public int setPC(int enteredPC) {
-        PC = enteredPC
+        PC = enteredPC;
     }
     // Decode hex to base-10
     public int decode(String input) {
