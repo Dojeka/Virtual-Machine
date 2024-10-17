@@ -30,7 +30,7 @@ public class CPU {
         return PC;
     }
 
-    public int setPC(int enteredPC) {
+    public void setPC(int enteredPC) {
         PC = enteredPC;
     }
     // Decode hex to base-10
