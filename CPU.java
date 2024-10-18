@@ -26,6 +26,13 @@ public class CPU {
         return RAM;
     }
 
+    public int getPC() {
+        return PC;
+    }
+
+    public void setPC(int enteredPC) {
+        PC = enteredPC;
+    }
     // Decode hex to base-10
     public int decode(String input) {
         return Integer.parseInt(input, 16);
