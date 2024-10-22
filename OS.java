@@ -3,14 +3,17 @@ public class OS {
     public static String [] RAM = new String[1024];
 
     static LTScheduler lts = new LTScheduler();
+
+    static Dispatcher dispatcher = new Dispatcher();
     
     public static void main(String[] args) {
         //Loader portion
         Loader.Load();
-        //LTScheduler add jobs to queue
+
+        //LTScheduler sorts jobs into priority
         lts.LTSpriorityQueue();
+
         int currentJob = 0;
-        
 
         //CPU portion
         CPU cpu = new CPU(RAM);
@@ -19,16 +22,19 @@ public class OS {
         //since there isn't enough space in Ram to add all the jobs from disk to Ram in one run.
         while(currentJob < Loader.jobs.length){
 
+            PCB currentJob1 = Loader.jobs[currentJob];
+
             //move jobs from RAM to disk
             LTScheduler.LongTermScheduler();
 
             //Short term scheduler would then add the current job's info to the registers for the CPU
             //ShortTermScheduler.schedule
-
+            dispatcher.loadJob(cpu, currentJob1);
             cpu.run();
 
-
-
+            dispatcher.saveToDisk(currentJob1);
+            dispatcher.removeJobFromRam(currentJob1);
+            
             currentJob++;
         }
 

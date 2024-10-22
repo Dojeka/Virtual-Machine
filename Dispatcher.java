@@ -12,4 +12,14 @@ public class Dispatcher {
 			OS.disk[k] = OS.RAM[i];
 		}
 	}
+
+	public void removeJobFromRam(PCB cJ){
+		PCB currentJob = cJ;
+
+		//this just make sure the job is considered removed from RAM, it can be zeroed out or not
+		//it doesnt matter b/c the PCB contains the job beginning and end ensuring that the CPU doesn't
+		//go out of bounds
+
+		LTScheduler.totalOpenRamSpace += currentJob.getLength();
+	}
 }
