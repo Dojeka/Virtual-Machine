@@ -195,6 +195,7 @@ public class CPU {
             PC++;
         }
         System.arraycopy(registers,0,RAMData,0,registers.length);
+        OS.RAM = getRAM();
     }
 
     // MOVI instruction
