@@ -26,6 +26,9 @@ public class OS {
             //ShortTermScheduler.schedule
 
             cpu.run();
+
+
+
             currentJob++;
         }
 

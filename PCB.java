@@ -12,7 +12,7 @@ public class PCB {
 
     //Added by John
     //Added job info of space in ram to pcb
-    int jobBeginningInRam;
+    int jobBeginningInRam; //This is basically the initial value of program counter
     int jobEndingInRam;
     int jobInputBufferStartInRam;
     int jobOutputBufferStartInRam;
