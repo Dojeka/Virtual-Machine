@@ -2,16 +2,21 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class LTScheduler {
-
+    //adding values to keep track of metrics
+    static int maxRamSpaceUsed = 0;
 
     //int to keep track of the next open index in the ram to insert data into
     static int nextOpenSpace=0;
     PCBComparator comparator = new PCBComparator();
     static int totalOpenRamSpace = OS.RAM.length;
+    static int k = 0;
 
     public void LTSpriorityQueue() {
         PCB[] jobs = Loader.jobs;
         Arrays.sort(jobs, comparator);
+
+        //jobs is a local variable, need to set global jobs to the newly sorted jobs or the longtermscheduler will be using the older jobs
+        Loader.jobs = jobs;
     }
 
     public static void LongTermScheduler() {
@@ -19,18 +24,12 @@ public class LTScheduler {
 
 
         String[] ram = OS.RAM;
-        int k = 0;
+
         PCB job = jobs[k];
 
         while(job.getLength() < totalOpenRamSpace && k < jobs.length) {
             job = jobs[k];
-            int requiredSpace = job.instructLength + job.inputLength + job.outputLength + job.tempLength;
 
-            // Check if there's enough space in RAM before loading the job
-            if (nextOpenSpace + requiredSpace > ram.length) {
-                System.out.println("Not enough space in RAM for Job (Priority: " + job.getPriority() + "). Waiting for space to free up.");
-                break; // stop adding jobs
-            }
 
             job.setJobBeginningInRam(nextOpenSpace);
             job.setJobEndingInRam(nextOpenSpace + job.instructLength - 1);
@@ -67,9 +66,12 @@ public class LTScheduler {
 
             job.setJobOutputBufferStartInRam(nextOpenSpace);
 
+
             //Add temp buffer space to ram by moving nextOpenSpace (spot where new jobs or data will be added)\
             //over the length of the temp buffer size
             nextOpenSpace += job.outputLength + job.tempLength;
+
+            job.setJobTempBufferStartInRam(nextOpenSpace);
 
 
             //Have a variable called total ram space that keeps track of total open indexes in ram that are available
@@ -83,9 +85,18 @@ public class LTScheduler {
             if (nextJob.getLength() > ram.length) {
                 nextOpenSpace = 0;
             }
-            k++;
 
+            k++;
         }
+
+        //"Method" to track max ram used
+        int ramUsed = OS.RAM.length - totalOpenRamSpace;
+        if(ramUsed > maxRamSpaceUsed){
+            maxRamSpaceUsed = ramUsed
+        }
+
+
+        OS.RAM = ram;
     }
 
     public static void main(String[] args) {

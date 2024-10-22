@@ -7,25 +7,29 @@ public class PCB {
     int jobBeginningInDisk;
     int jobEndingInDisk;
 
+    //Store jobNumber in PCB so it can be rewritten on final file later on
+    int jobNumber;
+
     //Added by John
     //Added job info of space in ram to pcb
-    int jobBeginningInRam;
+    int jobBeginningInRam; //This is basically the initial value of program counter
     int jobEndingInRam;
     int jobInputBufferStartInRam;
     int jobOutputBufferStartInRam;
+    int jobTempBufferStartInRam;
 
-    public PCB (int instructLength, int priority, int inputLength, int outputLength, int tempLength, int jobEndingInDisk) {
+    public PCB (int instructLength, int priority, int inputLength, int outputLength, int tempLength, int jobEndingInDisk, int jobNumber) {
         this.instructLength = instructLength;
         this.priority = priority;
         this.inputLength = inputLength;
         this.outputLength = outputLength;
         this.tempLength = tempLength;
         this.jobBeginningInDisk = jobEndingInDisk - inputLength - outputLength - tempLength - instructLength;
-        this.jobEndingInDisk = jobEndingInDisk; //exclusive
+        this.jobEndingInDisk = jobEndingInDisk;
+        this.jobNumber = jobNumber;
+        //exclusive
     } //PCB Constructor
-
-    //Added by John
-    public PCB() {}
+    
 
     //Added job info of jobs space in ram to pcb
     public void setJobBeginningInRam(int jobBeginningInRam) {
@@ -34,8 +38,15 @@ public class PCB {
     public void setJobEndingInRam(int jobEndingInRam) {
         this.jobEndingInRam = jobEndingInRam;
     }
-    public void setJobInputBufferStartInRam(int jobInputBufferStartInRam) {this.jobInputBufferStartInRam = jobInputBufferStartInRam;}
-    public void setJobOutputBufferStartInRam(int jobOutputBufferStartInRam) {this.jobOutputBufferStartInRam = jobOutputBufferStartInRam;}
+    public void setJobInputBufferStartInRam(int jobInputBufferStartInRam) {
+        this.jobInputBufferStartInRam = jobInputBufferStartInRam;
+    }
+    public void setJobOutputBufferStartInRam(int jobOutputBufferStartInRam) {
+        this.jobOutputBufferStartInRam = jobOutputBufferStartInRam;
+    }
+    public void setJobTempBufferStartInRam(int jobTempBufferStartInRam) {
+        this.jobTempBufferStartInRam = jobTempBufferStartInRam;
+    }
 
     public int getPriority() {
         return priority;
