@@ -11,6 +11,7 @@ public class OS {
         Loader.Load();
 
         //LTScheduler sorts jobs into priority
+        //When doing the FCFS, just don't call this
         lts.LTSpriorityQueue();
 
         int currentJob = 0;
@@ -34,7 +35,7 @@ public class OS {
 
             dispatcher.saveToDisk(currentJob1);
             dispatcher.removeJobFromRam(currentJob1);
-            
+
             currentJob++;
         }
 

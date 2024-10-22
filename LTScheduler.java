@@ -2,7 +2,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class LTScheduler {
-
+    //adding values to keep track of metrics
+    static int maxRamSpaceUsed = 0;
 
     //int to keep track of the next open index in the ram to insert data into
     static int nextOpenSpace=0;
@@ -87,6 +88,13 @@ public class LTScheduler {
 
             k++;
         }
+
+        //"Method" to track max ram used
+        int ramUsed = OS.RAM.length - totalOpenRamSpace;
+        if(ramUsed > maxRamSpaceUsed){
+            maxRamSpaceUsed = ramUsed
+        }
+
 
         OS.RAM = ram;
     }
