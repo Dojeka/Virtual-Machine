@@ -17,8 +17,10 @@ public class PCB {
     int jobInputBufferStartInRam;
     int jobOutputBufferStartInRam;
     int jobTempBufferStartInRam;
+    long jobStartTime;
+    long jobEndTime;
 
-    public PCB (int instructLength, int priority, int inputLength, int outputLength, int tempLength, int jobEndingInDisk, int jobNumber) {
+    public PCB (int instructLength, int priority, int inputLength, int outputLength, int tempLength, int jobEndingInDisk, int jobNumber, long jobStartTime) {
         this.instructLength = instructLength;
         this.priority = priority;
         this.inputLength = inputLength;
@@ -27,6 +29,7 @@ public class PCB {
         this.jobBeginningInDisk = jobEndingInDisk - inputLength - outputLength - tempLength - instructLength;
         this.jobEndingInDisk = jobEndingInDisk;
         this.jobNumber = jobNumber;
+        this.jobStartTime = jobStartTime;
         //exclusive
     } //PCB Constructor
     
@@ -54,6 +57,22 @@ public class PCB {
 
     public int getJobNumber() {
         return jobNumber;
+    }
+
+    public long getJobStartTime() {
+        return jobStartTime;
+    }
+
+    public void setJobStartTime(long jobStartTime) {
+        this.jobStartTime = jobStartTime;
+    }
+
+    public long getJobEndTime() {
+        return jobEndTime;
+    }
+
+    public void setJobEndTime(long jobEndTime) {
+        this.jobEndTime = jobEndTime;
     }
 
     public int getLength() {

@@ -37,7 +37,8 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("JOB") & jobNumber != 0) {
-            jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber);
+            long jobStartTime = System.nanoTime();
+            jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber, jobStartTime);
             jobCounter++;
         }
     }
@@ -54,7 +55,7 @@ public class Loader {
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();
-                System.out.println(line);
+                //System.out.println(line);
                 if (line.contains("//")) {
                     FinishJob(line);
                     readType = JobPortion(line);
