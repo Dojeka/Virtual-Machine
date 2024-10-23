@@ -12,26 +12,29 @@ public class OS {
 
         //LTScheduler sorts jobs into priority
         //When doing the FCFS, just don't call this
-        lts.LTSpriorityQueue();
+        //lts.LTSpriorityQueue();
 
         int currentJob = 0;
 
         //CPU portion
-        CPU cpu = new CPU(RAM);
+        //CPU cpu = new CPU(RAM);
 
         //This while loop is needed because we can't just call the long term schedueler one time
         //since there isn't enough space in Ram to add all the jobs from disk to Ram in one run.
         while(currentJob < Loader.jobs.length){
-
+            System.out.println("OS: "+ currentJob);
             PCB currentJob1 = Loader.jobs[currentJob];
 
             //move jobs from RAM to disk
+
             LTScheduler.LongTermScheduler();
+
 
             //Short term scheduler would then add the current job's info to the registers for the CPU
             //ShortTermScheduler.schedule
-            dispatcher.loadJob(cpu, currentJob1);
-            cpu.run();
+            
+            //dispatcher.loadJob(cpu, currentJob1);
+            //cpu.run();
 
             dispatcher.saveToDisk(currentJob1);
             dispatcher.removeJobFromRam(currentJob1);

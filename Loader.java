@@ -12,6 +12,8 @@ public class Loader {
     static public PCB[] jobs = new PCB[30];
     public static String[] disk = new String[3000];
     static int diskCounter = 0;
+    static int jobCounter = 0;
+
 
     public static int JobPortion(String line) {
         if (line.contains("JOB")){
@@ -35,7 +37,8 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("JOB") & jobNumber != 0) {
-            jobs[jobNumber-1] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber);
+            jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber);
+            jobCounter++;
         }
     }
 

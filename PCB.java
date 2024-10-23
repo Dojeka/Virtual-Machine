@@ -52,6 +52,9 @@ public class PCB {
         return priority;
     }
 
+    public int getJobNumber() {
+        return jobNumber;
+    }
 
     public int getLength() {
         return instructLength + inputLength + outputLength + tempLength;

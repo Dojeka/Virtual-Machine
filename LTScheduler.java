@@ -24,23 +24,36 @@ public class LTScheduler {
 
 
         String[] ram = OS.RAM;
+        System.out.println(k);
+        PCB job = null;
 
-        PCB job = jobs[k];
+        if (k<30) {
+             job = jobs[k];
+        }
 
-        while(job.getLength() < totalOpenRamSpace && k < jobs.length) {
-            job = jobs[k];
+        while(k < jobs.length && job.getLength() < totalOpenRamSpace) {
+            System.out.println(job.getLength() < totalOpenRamSpace);
+            System.out.println(totalOpenRamSpace);
+            System.out.println(job.getLength());
+
+            if (job.getLength() + nextOpenSpace > 1024) {
+                nextOpenSpace = 0;
+                totalOpenRamSpace = 0;
+            }
+
+
 
 
             job.setJobBeginningInRam(nextOpenSpace);
             job.setJobEndingInRam(nextOpenSpace + job.instructLength - 1);
 
-
             int instructionStartInDisk = job.jobBeginningInDisk;
+
             //first add instructions of jobs to ram
             System.out.println("Loading Job into RAM at index: " + nextOpenSpace);
             for (int i = 0; i < job.instructLength; i++) {
                 String instruction = Loader.disk[instructionStartInDisk + i];
-                System.out.println("Loading instruction from disk: " + instruction);
+                //System.out.println("Loading instruction from disk: " + instruction);
                 ram[nextOpenSpace + i] = "INSTR:" + instruction;
             }
 
@@ -51,8 +64,10 @@ public class LTScheduler {
             job.setJobInputBufferStartInRam(nextOpenSpace);
             int inputStartInDisk = instructionStartInDisk + job.instructLength;
 
-            System.out.println("Loading Input Buffer into RAM at index: " + nextOpenSpace);
+           // System.out.println("Loading Input Buffer into RAM at index: " + nextOpenSpace);
+
             //Add input buffer to ram
+
             for (int i = 0; i < job.inputLength; i++) {
                 if (inputStartInDisk + i < Loader.disk.length) {
                     ram[nextOpenSpace + i] = "DATA:"  + Loader.disk[inputStartInDisk + i];
@@ -60,6 +75,7 @@ public class LTScheduler {
                     System.out.println("Input Buffer index out of bounds: " + (inputStartInDisk + i));
                 }
             }
+
             nextOpenSpace += job.inputLength;
 
             //mark the space in ram that the output buffer starts at
@@ -77,22 +93,24 @@ public class LTScheduler {
             //Have a variable called total ram space that keeps track of total open indexes in ram that are available
             //As we add jobs the totalOpenRamSpace will decrease, once we don't have enough space to add to ram the while
             //Look fails, the Short term schedule will have to update the total open ram space whenever it removes a job
+
             totalOpenRamSpace -= job.getLength();
+            System.out.println(totalOpenRamSpace );
 
             //Once the next job won't be able to fit in the end of ram,
             //Set the pointer back to the beginning of ram
-            PCB nextJob = jobs[k+1];
-            if (nextJob.getLength() > ram.length) {
-                nextOpenSpace = 0;
-            }
 
             k++;
+
+            if(k<30){
+                job = jobs[k];
+            }
         }
 
         //"Method" to track max ram used
         int ramUsed = OS.RAM.length - totalOpenRamSpace;
         if(ramUsed > maxRamSpaceUsed){
-            maxRamSpaceUsed = ramUsed
+            maxRamSpaceUsed = ramUsed;
         }
 
 
