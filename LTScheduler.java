@@ -1,70 +1,137 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class LTScheduler {
-    PCB [] jobQueue = new PCB [40];
-    int currentJobCounter = 0;
-    Loader loader = new Loader();
-    CPU cpu = new CPU();
+    //adding values to keep track of metrics
+    static int maxRamSpaceUsed = 0;
+
     //int to keep track of the next open index in the ram to insert data into
-    int nextOpenSpace=0;
+    static int nextOpenSpace=0;
+    PCBComparator comparator = new PCBComparator();
+    static int totalOpenRamSpace = OS.RAM.length;
+    static int k = 0;
 
+    public void LTSpriorityQueue() {
+        PCB[] jobs = Loader.jobs;
+        Arrays.sort(jobs, comparator);
 
-
-
-    //currently job queue is just an array, and we iterate through the "queue" by keeping track
-    //of the current job and go to the next index when job has been added to the ram
-    public void setJobQueue(){
-        PCB[] jobs = loader.getJobs();
-        for (int i = 0; i < jobs.length; i++) {
-            int priority = jobs[i].getPriority();
-            jobQueue[priority] = jobs[i];
-        }
+        //jobs is a local variable, need to set global jobs to the newly sorted jobs or the longtermscheduler will be using the older jobs
+        Loader.jobs = jobs;
     }
 
-    public void addJobToRam(){
+    public static void LongTermScheduler() {
+        PCB[] jobs = Loader.jobs;
 
-        PCB job = jobQueue[currentJobCounter];
 
-        String [] ram = cpu.getRAM();
+        String[] ram = OS.RAM;
+        System.out.println(k);
+        PCB job = null;
 
-        //mark the spaces in ram that the job will take up
-        job.setJobBeginningInRam(nextOpenSpace);
-        job.setJobEndingInRam(nextOpenSpace+job.instructLength);
-
-        //first add instructions of jobs to ram
-        int j = 0;
-        for(int i = nextOpenSpace; i < nextOpenSpace+ job.instructLength; i++){
-            //ram[i] = job.instructionList[j];
-            j++;
-        }
-        nextOpenSpace = nextOpenSpace + job.instructLength+1;
-
-        //Add input buffer to ram
-        j = 0;
-        for (int i = nextOpenSpace; i < nextOpenSpace + job.inputLength; i++) {
-            //ram[i] = job.inputBuffer[j];
-            j++;
+        if (k<30) {
+             job = jobs[k];
         }
 
-        //mark the spaces in ram that the input buffer starts at
-        job.setJobInputBufferStartInRam(nextOpenSpace);
+        while(k < jobs.length && job.getLength() < totalOpenRamSpace) {
+            System.out.println(job.getLength() < totalOpenRamSpace);
+            System.out.println(totalOpenRamSpace);
+            System.out.println(job.getLength());
 
-        //mark the space in ram that the output buffer starts at
-        nextOpenSpace = nextOpenSpace + job.inputLength+1;
-        job.setJobOutputBufferStartInRam(nextOpenSpace);
+            if (job.getLength() + nextOpenSpace > 1024) {
+                nextOpenSpace = 0;
+                totalOpenRamSpace = 0;
+            }
 
-        //Add temp buffer space to ram by moving nextOpenSpace (spot where new jobs or data will be added)\
-        //over the length of the temp buffer size
-        nextOpenSpace = nextOpenSpace + job.outputLength+job.tempLength;
 
-        //increment currentjobcounter so that next job would be added to ram next time method is called
-        //or could change this to accept currentjobcounter as a parameter incase this is actually supposed to be
-        //tracked by other parts of the OS (i just don't know tbh)
-        currentJobCounter++;
 
-        //increment nextopenspace by one index so info is added to an empty index in the ram array
-        nextOpenSpace ++;
+
+            job.setJobBeginningInRam(nextOpenSpace);
+            job.setJobEndingInRam(nextOpenSpace + job.instructLength - 1);
+
+            int instructionStartInDisk = job.jobBeginningInDisk;
+
+            //first add instructions of jobs to ram
+            System.out.println("Loading Job into RAM at index: " + nextOpenSpace);
+            for (int i = 0; i < job.instructLength; i++) {
+                String instruction = Loader.disk[instructionStartInDisk + i];
+                //System.out.println("Loading instruction from disk: " + instruction);
+                ram[nextOpenSpace + i] = "INSTR:" + instruction;
+            }
+
+
+            nextOpenSpace += job.instructLength;
+
+
+            job.setJobInputBufferStartInRam(nextOpenSpace);
+            int inputStartInDisk = instructionStartInDisk + job.instructLength;
+
+           // System.out.println("Loading Input Buffer into RAM at index: " + nextOpenSpace);
+
+            //Add input buffer to ram
+
+            for (int i = 0; i < job.inputLength; i++) {
+                if (inputStartInDisk + i < Loader.disk.length) {
+                    ram[nextOpenSpace + i] = "DATA:"  + Loader.disk[inputStartInDisk + i];
+                } else {
+                    System.out.println("Input Buffer index out of bounds: " + (inputStartInDisk + i));
+                }
+            }
+
+            nextOpenSpace += job.inputLength;
+
+            //mark the space in ram that the output buffer starts at
+
+            job.setJobOutputBufferStartInRam(nextOpenSpace);
+
+
+            //Add temp buffer space to ram by moving nextOpenSpace (spot where new jobs or data will be added)\
+            //over the length of the temp buffer size
+            nextOpenSpace += job.outputLength + job.tempLength;
+
+            job.setJobTempBufferStartInRam(nextOpenSpace);
+
+
+            //Have a variable called total ram space that keeps track of total open indexes in ram that are available
+            //As we add jobs the totalOpenRamSpace will decrease, once we don't have enough space to add to ram the while
+            //Look fails, the Short term schedule will have to update the total open ram space whenever it removes a job
+
+            totalOpenRamSpace -= job.getLength();
+            System.out.println(totalOpenRamSpace );
+
+            //Once the next job won't be able to fit in the end of ram,
+            //Set the pointer back to the beginning of ram
+
+            k++;
+
+            if(k<30){
+                job = jobs[k];
+            }
+        }
+
+        //"Method" to track max ram used
+        int ramUsed = OS.RAM.length - totalOpenRamSpace;
+        if(ramUsed > maxRamSpaceUsed){
+            maxRamSpaceUsed = ramUsed;
+        }
+
+
+        OS.RAM = ram;
+    }
+
+    public static void main(String[] args) {
+        Loader.Load();
+        LTScheduler scheduler = new LTScheduler();
+        scheduler.LongTermScheduler();
+
     }
 
 
+}
+
+//Helper class to compare two PCB objects based on their priority
+class PCBComparator implements Comparator<PCB> {
+    //compare method to compare the 2 PCB's by their priority
+    public int compare(PCB job1, PCB job2) {
+        //returns either 1 (job1 goes after job2),0 (job1 and job2 have same priority),-1 (job1 is before job2)
+        return Integer.compare(job1.getPriority(), job2.getPriority());
+    }
 }

@@ -7,9 +7,11 @@ public class CPU {
     private Scanner sc = new Scanner(System.in);
 
     // 64-bit RAM
-    static String[] RAM = new String[1024];
+    static String[] RAMInstr;
 
-    // 16 registers
+    static String[] RAMData;
+
+    // 16 registers, reg-0 accumulator, reg-1 zero register
     private String[] registers = new String[16];
 
     private int PC; // Program Counter
@@ -17,14 +19,64 @@ public class CPU {
     // Constructor to initialize CPU with provided memory
     public CPU(String[] memory) {
         running = false;
-        System.arraycopy(memory, 0, RAM, 0, memory.length);
         PC = 0;
+        RAMInstr = new String[512];
+        RAMData = new String[512];
+
+        //Keep the instructions and data in RAM
+        int regCount = 0;
+
+        for(int i = 0; i < memory.length; i++){
+            //instructions in RAMInstr
+            if (memory[i].contains("INST:")){
+                //substring to remove the INSTR: part
+                RAMInstr[i] = memory[i].substring(5);
+            //data in RAMData
+            }else if(memory[i].contains("DATA:")){
+                //Checks if RAMData full or memory empty
+                if(regCount==512 || (decode(memory[i]) == 0)){
+                    break;
+                }else {
+                    //substring to remove the DATA: part
+                    RAMData[regCount] = memory[i].substring(5);
+                    regCount++;
+                }
+            }
+        }
+
+        System.out.println("CPU-Instructions: ");
+        for (int i = 0; i < RAMInstr.length; i++){
+            System.out.println(RAMInstr[i]);
+        }
+
+        System.out.println("CPU-Data: ");
+        for (int i = 0; i < RAMData.length; i++){
+            System.out.println(RAMData[i]);
+        }
     }
 
-    // Get RAM content for inspection
+
+    // Getters and setters
     public String[] getRAM() {
+        int ramCount = 0;
+        String[] RAM = new String[1024];
+        for (int i=0; i < RAM.length; i++){
+            if(i<512){
+                RAM[i] = RAMInstr[i];
+            }else{
+                RAM[i] = RAMData[ramCount];
+                ramCount++;
+            }
+        }
         return RAM;
     }
+    public int getPC() {
+        return PC;
+    }
+    public void setPC(int enteredPC){
+        PC = enteredPC;
+    }
+
 
     // Decode hex to base-10
     public int decode(String input) {
@@ -38,31 +90,34 @@ public class CPU {
 
     // DMA operations
     public void DMA(int input) {
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
-        int address = decode(RAM[PC].substring(5));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3, 4));
+        int address = decode(RAMInstr[PC].substring(5));
 
         switch (input) {
             case 0: // Read
-                System.out.println("DMA Read: Getting registers and address.");
-                if (address >= 0 && address < RAM.length) {
-                    System.out.println("Transferring from memory to input buffer...");
-                    inputBuffer = RAM[address]; // Read from RAM to input buffer
-                    registers[regOne] = inputBuffer; // Store in specified register
+                System.out.println("CPU-DMA Read");
+                if (address != 0 && address < RAMData.length) {
+                    System.out.println("CPU-Transferring from memory to Register " + regOne);
+                    registers[regOne] = RAMData[address]; // Read from RAM to register 1
+                    RAMData[address] = "00000000"; //Empty register after transferring data
                 } else {
-                    System.out.println("Invalid address for read operation.");
+                    System.out.println("CPU-Transferring data pointed to by Register " + regTwo + " into Register " + regOne);
+                    registers[regOne] =  RAMData[regTwo];
+                    RAMData[regTwo] = "00000000";
                 }
                 break;
 
             case 1: // Write
-                System.out.println("DMA Write: Getting registers and address.");
-                if (address >= 0 && address < RAM.length) {
-                    System.out.println("Transferring from register to memory...");
-                    outputBuffer = registers[regOne]; // Get data from register
-                    RAM[address] = outputBuffer; // Write to RAM at specified address
+                System.out.println("CPU-DMA Write");
+                if (address != 0 && address < RAMData.length) {
+                    System.out.println("CPU-Transferring from register " + regOne + " into memory at address");
+                    RAMData[address] = registers[regOne];
                 } else {
-                    System.out.println("Invalid address for write operation.");
+                    System.out.println("CPU-Transferring from register " + regOne + " into memory at " + regTwo);
+                    RAMData[regTwo] = registers[regOne];
                 }
+                registers[regOne] = "00000000";
                 break;
         }
     }
@@ -71,18 +126,17 @@ public class CPU {
     public void run() {
         running = true;
         while (running) {
-            if (PC < 0 || PC >= RAM.length) {
-                System.out.println("Program Counter out of bounds: " + PC);
+            if (PC < 0 || PC >= RAMInstr.length) {
+                System.out.println("CPU-Program Counter out of bounds: " + PC);
                 running = false; // Stop execution
                 break;
             }
 
-            // Fetch the opcode (first 2 hex characters)
-            String op = RAM[PC];
+            String op = RAMInstr[PC];
 
             // Ensure that RAM[PC] is not null
             if (op == null || op.length() < 2) {
-                System.out.println("Invalid instruction at PC: " + PC);
+                System.out.println("CPU-Invalid instruction at PC: " + PC);
                 running = false; // Stop execution
                 break;
             }
@@ -110,17 +164,12 @@ public class CPU {
                 case "10":
                     SLT(); //SLT instruction
                     break;
-                case "56":
-                    SUB(); //SUB instruction
-                    break;
                 case "43":
                     LW(); //LW instruction
                     break;
                 case "05":
                     ADD(); //ADD instruction
                     break;
-                case "92":
-                    ST();// ST instruction
                 case "00":
                     DMA(0); //DMA Read
                 case "55":
@@ -132,123 +181,144 @@ public class CPU {
                 case "08":
                     DIV(); //DIV instruction
                     break;
+                case "56":
+                    BNE();
+                case "92":
+                    HLT();
+                    break;
 
                 default:
-                    System.out.println("Unknown opcode: " + op);
+                    System.out.println("CPU-Unknown opcode: " + op);
                     running = false; // Stop if unknown opcode
                     break;
             }
             PC++;
         }
+        System.arraycopy(registers,0,RAMData,0,registers.length);
+        OS.RAM = getRAM();
     }
 
     // MOVI instruction
     void MOVI() {
         // Getting registers
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int address = decode(RAMInstr[PC].substring(5));
 
-        System.out.println("MOVI: Transferring "+ regTwo +" into register " + regOne);
-        registers[regOne] = encode(regTwo); // Store the immediate value into the register
+        System.out.println("CPU-MOVI: Setting register "+regOne+" to given value");
+        registers[regOne] = encode(address); // Store the immediate value into the register
     }
     void LDI(){
         // Getting register and address
-        int regOne = decode(RAM[PC].substring(3,4));
-        int address = decode(RAM[PC].substring(5));
+        int regOne = decode(RAMInstr[PC].substring(3,4));
+        int address = decode(RAMInstr[PC].substring(5));
 
-        System.out.println("LDI: Transferring "+ address +" int register: "+ regOne);
+        System.out.println("CPU-LDI: Setting register: "+ regOne);
         registers[regOne] = encode(address);
     }
     void ADDI(){
         // Getting register and address
-        int regOne = decode(RAM[PC].substring(3,4));
-        int address = decode(RAM[PC].substring(5));
+        int regOne = decode(RAMInstr[PC].substring(3,4));
+        int address = decode(RAMInstr[PC].substring(5));
+
+        //adding the address data to the registers contents
+        System.out.println("CPU-ADDI: Adding value to content in register " + regOne);
+        int results = decode(registers[regOne]) + address;
+
+        registers[regOne] = encode(results);
     }
     void ST() {
         // Store the value from a register into RAM
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int address = decode(RAM[PC].substring(4, 8));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3,4));
+        int address = decode(RAMInstr[PC].substring(5));
 
-        System.out.println("ST: Storing register " + regOne + " value into address " + address);
-
-        if (address >= 0 && address < RAM.length) {
-            RAM[address] = registers[regOne];
+        if (address != 0 && address <= RAMData.length) {
+            System.out.println("ST: Storing register " + regOne + " value into address");
+            RAMData[address] = registers[regOne];
         } else {
-            System.out.println("Invalid memory address.");
+            System.out.println("ST: Storing register " + regOne + " value into location pointed to by register " + regTwo);
+            int location = decode(registers[regTwo]);
+
+            RAMData[location] = registers[regOne];
         }
     }
 
     void SLT() {
         // Set Less Than (set register to 1 if one register is less than another)
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
-        int regDest = decode(RAM[PC].substring(4, 5));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3, 4));
+        int regThree = decode(RAMInstr[PC].substring(4, 5));
 
-        System.out.println("SLT: Comparing register " + regOne + " and register " + regTwo);
-        if (Integer.parseInt(registers[regOne]) < Integer.parseInt(registers[regTwo])) {
-            registers[regDest] = "1"; // Set to 1 if regOne < regTwo
+        System.out.println("SLT: Comparing register " + regTwo + " and register " + regThree);
+        if (decode(registers[regTwo]) < decode(registers[regThree])) {
+            registers[regOne] = encode(1); // Set to 1 if regTwo < regThree
         } else {
-            registers[regDest] = "0"; // Set to 0 otherwise
+            registers[regOne] = encode(0); // Set to 0 otherwise
         }
     }
 
-    void SUB() {
-        // Subtract the value of one register from another and store in the destination register
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
-        int regDest = decode(RAM[PC].substring(4, 5));
+    void BNE() {
+        // Branches when register 1 and 2 are equal
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3, 4));
+        int address = decode(RAMInstr[PC].substring(5));
 
-        System.out.println("SUB: Subtracting register " + regTwo + " from register " + regOne);
-        int result = Integer.parseInt(registers[regOne]) - Integer.parseInt(registers[regTwo]);
-        registers[regDest] = encode(result);
+        System.out.println("CPU-BNE: Branching when register " + regOne + " and register " + regTwo + " are equal.");
+        if (!(registers[regOne].equals(registers[regTwo]))) {
+            System.out.println("CPU-BNE: Branching");
+            int Dest = address/4;
+            PC = Dest;
+        }
     }
 
     void LW() {
         // Load Word: Load value from memory into a register
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int address = decode(RAM[PC].substring(4, 8));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3,4));
+        int address = decode(RAMInstr[PC].substring(5));
 
-        System.out.println("LW: Loading value from address " + address + " into register " + regOne);
-        if (address >= 0 && address < RAM.length) {
-            registers[regOne] = RAM[address];
+        if (address > 0 && address < RAMData.length) {
+            System.out.println("LW: Loading value from address " + address + " into register " + regOne);
+            registers[regOne] = RAMData[address];
         } else {
-            System.out.println("Invalid memory address.");
+            System.out.println("LW: Loading value from address in register " + regTwo + " into register " + regOne);
+            registers[regOne] = RAMData[regTwo];
         }
     }
 
     void ADD() {
         // Add the value of two registers and store in the destination register
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
-        int regDest = decode(RAM[PC].substring(4, 5));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3, 4));
+        int regThree = decode(RAMInstr[PC].substring(4, 5));
 
-        System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
-        int result = Integer.parseInt(registers[regOne]) + Integer.parseInt(registers[regTwo]);
-        registers[regDest] = encode(result);
+        System.out.println("ADD: Adding register " + regTwo + " and register " + regThree);
+        int result = decode(registers[regTwo]) + decode(registers[regThree]);
+        registers[regOne] = encode(result);
     }
 
     void MOV() {
         // Move value from one register to another
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3, 4));
 
         System.out.println("MOV: Moving value from register " + regTwo + " to register " + regOne);
         registers[regOne] = registers[regTwo];
+        registers[regTwo] = "00000000";
     }
 
     void DIV() {
         // Divide the value of one register by another and store in the destination register
-        int regOne = decode(RAM[PC].substring(2, 3));
-        int regTwo = decode(RAM[PC].substring(3, 4));
-        int regDest = decode(RAM[PC].substring(4, 5));
+        int regOne = decode(RAMInstr[PC].substring(2, 3));
+        int regTwo = decode(RAMInstr[PC].substring(3, 4));
+        int regThree = decode(RAMInstr[PC].substring(4, 5));
 
-        System.out.println("DIV: Dividing register " + regOne + " by register " + regTwo);
-        if (Integer.parseInt(registers[regTwo]) != 0) {
-            int result = Integer.parseInt(registers[regOne]) / Integer.parseInt(registers[regTwo]);
-            registers[regDest] = encode(result);
-        } else {
-            System.out.println("Error: Division by zero.");
-        }
+        System.out.println("DIV: Dividing register " + regTwo + " by register " + regThree);
+        int results = decode(registers[regTwo]) / decode(registers[regThree]);
+        registers[regOne] = encode(results);
     }
 
+    void HLT(){
+        running = false;
+    }
 }
