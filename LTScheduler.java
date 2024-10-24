@@ -118,7 +118,7 @@ public class LTScheduler {
     }
 
     public static void main(String[] args) {
-        Loader.Load();
+        Loader.Load(30);
         LTScheduler scheduler = new LTScheduler();
         scheduler.LongTermScheduler();
 

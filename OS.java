@@ -8,7 +8,7 @@ public class OS {
     
     public static void main(String[] args) {
         //Loader portion
-        Loader.Load();
+        Loader.Load(30);
 
         //LTScheduler sorts jobs into priority
         //When doing the FCFS, just don't call this

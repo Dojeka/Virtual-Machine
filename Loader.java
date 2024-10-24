@@ -9,7 +9,7 @@ public class Loader {
     static int inputLength;
     static int outputLength;
     static int tempLength;
-    static public PCB[] jobs = new PCB[30];
+    static public PCB[] jobs;
     public static String[] disk = new String[3000];
     static int diskCounter = 0;
     static int jobCounter = 0;
@@ -36,21 +36,21 @@ public class Loader {
     }
 
     public static void FinishJob(String line) {
-        if (line.contains("JOB") & jobNumber != 0) {
+        if (line.contains("END")) {
             jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber);
             jobCounter++;
         }
     }
 
-    public static void Load() {
+    public static void Load(int jobsSize) {
 
-
+        jobs = new PCB[jobsSize];
         String line;
         int readType = 0;
         int readCounter = 0;
 
         try {
-            File plaintext = new File("30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
+            File plaintext = new File("./src/30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();
@@ -59,6 +59,9 @@ public class Loader {
                     FinishJob(line);
                     readType = JobPortion(line);
                     readCounter = 0;
+                    if (jobs[jobsSize-1] != null) {
+                        break;
+                    }
                 } else {
                     switch (readType) {
                         case 0:
@@ -81,10 +84,10 @@ public class Loader {
                     }
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        FinishJob("JOB");
     }
 
     // for jobs
@@ -93,10 +96,12 @@ public class Loader {
     }
 
     public static void main(String[] args) {
-        Load();
+        Load(30);
 
        for (int i = 0; i < disk.length; i++)
             System.out.println(disk[i]);
+       for(int i = 0; i < jobs.length; i++)
+           System.out.println(jobs[i].getJobNumber());
     }
 
 
