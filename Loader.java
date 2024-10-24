@@ -9,9 +9,11 @@ public class Loader {
     static int inputLength;
     static int outputLength;
     static int tempLength;
-
     static public PCB[] jobs = new PCB[30];
+    public static String[] disk = new String[3000];
     static int diskCounter = 0;
+    static int jobCounter = 0;
+
 
     public static int JobPortion(String line) {
         if (line.contains("JOB")){
@@ -35,7 +37,8 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("JOB") & jobNumber != 0) {
-            jobs[jobNumber-1] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter);
+            jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber);
+            jobCounter++;
         }
     }
 
@@ -47,7 +50,7 @@ public class Loader {
         int readCounter = 0;
 
         try {
-            File plaintext = new File("./src/30-Jobs");
+            File plaintext = new File("30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();
@@ -59,12 +62,12 @@ public class Loader {
                 } else {
                     switch (readType) {
                         case 0:
-                            OS.disk[diskCounter] = line.replace("0x","");
+                            disk[diskCounter] = line.replace("0x","");
                             diskCounter++;
                             readCounter++;
                             break;
                         case 1:
-                            OS.disk[diskCounter] = line.replace("0x","");
+                            disk[diskCounter] = line.replace("0x","");
                             diskCounter++;
                             readCounter++;
                             if (readCounter >= inputLength) {
@@ -73,7 +76,7 @@ public class Loader {
                             }
                             break;
                         default:
-                            OS.disk[diskCounter] = "00000000";
+                            disk[diskCounter] = "00000000";
                             diskCounter++;
                     }
                 }
@@ -91,8 +94,10 @@ public class Loader {
 
     public static void main(String[] args) {
         Load();
-        for (int i = 0; i < OS.disk.length; i++)
-            System.out.println(OS.disk[i]);
+
+       for (int i = 0; i < disk.length; i++)
+            System.out.println(disk[i]);
     }
+
 
 }

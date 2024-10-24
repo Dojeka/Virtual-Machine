@@ -15,9 +15,7 @@ public class Dispatcher {
 
 	public void removeJobFromRam(PCB cJ){
 		PCB currentJob = cJ;
-        long endingTime = System.nanoTime() - currentJob.getJobStartTime();
-        System.out.println(endingTime);
-        currentJob.setJobEndTime(endingTime);
+
 		//this just make sure the job is considered removed from RAM, it can be zeroed out or not
 		//it doesnt matter b/c the PCB contains the job beginning and end ensuring that the CPU doesn't
 		//go out of bounds
