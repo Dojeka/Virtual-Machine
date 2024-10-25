@@ -50,7 +50,7 @@ public class Loader {
         int readCounter = 0;
 
         try {
-            File plaintext = new File("./src/30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
+            File plaintext = new File("30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();

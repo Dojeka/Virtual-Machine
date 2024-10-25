@@ -45,5 +45,7 @@ public class OS {
         //This file will change the document with the new information in the disk
         FileWrite.OverWrite();
 
+        System.out.println(LTScheduler.maxRamSpaceUsed);
+
     }
 }
