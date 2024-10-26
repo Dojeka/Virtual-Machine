@@ -38,9 +38,10 @@ public class LTScheduler {
 
 
 
-
             job.setJobBeginningInRam(nextOpenSpace);
-            job.setJobEndingInRam(nextOpenSpace + job.instructLength - 1);
+            System.out.println("Job Begin :"+job.jobBeginningInRam);
+            job.setjobInstructEndingInRam(nextOpenSpace + job.instructLength - 1);
+            System.out.println("Job End :"+job.jobInstructEndingInRam);
 
             int instructionStartInDisk = job.jobBeginningInDisk;
 
@@ -88,7 +89,9 @@ public class LTScheduler {
             //over the length of the temp buffer size
             nextOpenSpace += job.outputLength + job.tempLength;
 
-            job.setJobTempBufferStartInRam(nextOpenSpace);
+            job.setJobTempBufferStartInRam(nextOpenSpace-job.tempLength);
+            job.setJobEndingInRam(nextOpenSpace-1);
+
 
 
             //Have a variable called total ram space that keeps track of total open indexes in ram that are available
@@ -103,7 +106,7 @@ public class LTScheduler {
 
             k++;
 
-            if(k<30){
+            if(k<1){
                 job = jobs[k];
                 if (job.getLength() + nextOpenSpace > 1024) {
                     nextOpenSpace = 0;

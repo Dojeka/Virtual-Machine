@@ -13,10 +13,11 @@ public class PCB {
     //Added by John
     //Added job info of space in ram to pcb
     int jobBeginningInRam; //This is basically the initial value of program counter
-    int jobEndingInRam;
+    int jobInstructEndingInRam;
     int jobInputBufferStartInRam;
     int jobOutputBufferStartInRam;
     int jobTempBufferStartInRam;
+    int jobEndingInRam;
 
     public PCB (int instructLength, int priority, int inputLength, int outputLength, int tempLength, int jobEndingInDisk, int jobNumber) {
         this.instructLength = instructLength;
@@ -35,8 +36,8 @@ public class PCB {
     public void setJobBeginningInRam(int jobBeginningInRam) {
         this.jobBeginningInRam = jobBeginningInRam;
     }
-    public void setJobEndingInRam(int jobEndingInRam) {
-        this.jobEndingInRam = jobEndingInRam;
+    public void setjobInstructEndingInRam(int jobInstructEndingInRam) {
+        this.jobInstructEndingInRam = jobInstructEndingInRam;
     }
     public void setJobInputBufferStartInRam(int jobInputBufferStartInRam) {
         this.jobInputBufferStartInRam = jobInputBufferStartInRam;
@@ -46,6 +47,14 @@ public class PCB {
     }
     public void setJobTempBufferStartInRam(int jobTempBufferStartInRam) {
         this.jobTempBufferStartInRam = jobTempBufferStartInRam;
+    }
+
+    public int getJobEndingInRam() {
+        return jobEndingInRam;
+    }
+
+    public void setJobEndingInRam(int jobEndingInRam) {
+        this.jobEndingInRam = jobEndingInRam;
     }
 
     public int getPriority() {
