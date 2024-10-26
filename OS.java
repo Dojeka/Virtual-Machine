@@ -30,6 +30,9 @@ public class OS {
 
             //move jobs from RAM to disk
             LTScheduler.LongTermScheduler();
+            for(int i =0; i<RAM.length; i++){
+                System.out.println("index: "+i+" "+RAM[i]);
+            }
 
             //Short term scheduler would then add the current job's info to the registers for the CPU
             //ShortTermScheduler.schedule

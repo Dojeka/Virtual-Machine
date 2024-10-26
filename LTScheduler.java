@@ -70,7 +70,14 @@ public class LTScheduler {
                 }
             }
 
+
             nextOpenSpace += job.inputLength;
+
+            for (int i = 0; i < job.outputLength+job.tempLength; i++) {
+
+                //System.out.println("Loading instruction from disk: " + instruction);
+                ram[nextOpenSpace + i] = "0";
+            }
 
             //mark the space in ram that the output buffer starts at
 
