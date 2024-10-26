@@ -17,7 +17,7 @@ public class OS {
         int currentJob = 0;
 
         //CPU portion
-        //CPU cpu = new CPU(RAM);
+        CPU cpu = new CPU();
 
         //This while loop is needed because we can't just call the long term schedueler one time
         //since there isn't enough space in Ram to add all the jobs from disk to Ram in one run.
@@ -26,15 +26,13 @@ public class OS {
             PCB currentJob1 = Loader.jobs[currentJob];
 
             //move jobs from RAM to disk
-
             LTScheduler.LongTermScheduler();
-
 
             //Short term scheduler would then add the current job's info to the registers for the CPU
             //ShortTermScheduler.schedule
             
-            //dispatcher.loadJob(cpu, currentJob1);
-            //cpu.run();
+            dispatcher.loadJob(cpu, currentJob1);
+            cpu.run(currentJob1);
 
             dispatcher.saveToDisk(currentJob1);
             dispatcher.removeJobFromRam(currentJob1);

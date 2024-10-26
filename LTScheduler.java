@@ -53,7 +53,7 @@ public class LTScheduler {
             for (int i = 0; i < job.instructLength; i++) {
                 String instruction = Loader.disk[instructionStartInDisk + i];
                 //System.out.println("Loading instruction from disk: " + instruction);
-                ram[nextOpenSpace + i] = "INSTR:" + instruction;
+                ram[nextOpenSpace + i] = "I" + instruction;
             }
 
 
@@ -69,7 +69,7 @@ public class LTScheduler {
 
             for (int i = 0; i < job.inputLength; i++) {
                 if (inputStartInDisk + i < Loader.disk.length) {
-                    ram[nextOpenSpace + i] = "DATA:"  + Loader.disk[inputStartInDisk + i];
+                    ram[nextOpenSpace + i] = "D"  + Loader.disk[inputStartInDisk + i];
                 } else {
                     System.out.println("Input Buffer index out of bounds: " + (inputStartInDisk + i));
                 }
