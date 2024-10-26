@@ -22,7 +22,6 @@ public class LTScheduler {
     public static void LongTermScheduler() {
         PCB[] jobs = Loader.jobs;
 
-
         String[] ram = OS.RAM;
         System.out.println(k);
         PCB job = null;
@@ -47,7 +46,7 @@ public class LTScheduler {
 
 
             for (int i = 0; i < job.instructLength; i++) {
-                String instruction = Loader.disk[instructionStartInDisk + i];
+                String instruction = OS.disk[instructionStartInDisk + i];
                 //System.out.println("Loading instruction from disk: " + instruction);
                 ram[nextOpenSpace + i] = "I" + instruction;
             }
@@ -64,8 +63,8 @@ public class LTScheduler {
             //Add input buffer to ram
 
             for (int i = 0; i < job.inputLength; i++) {
-                if (inputStartInDisk + i < Loader.disk.length) {
-                    ram[nextOpenSpace + i] = "D"  + Loader.disk[inputStartInDisk + i];
+                if (inputStartInDisk + i < OS.disk.length) {
+                    ram[nextOpenSpace + i] = "D"  + OS.disk[inputStartInDisk + i];
                 } else {
                     System.out.println("Input Buffer index out of bounds: " + (inputStartInDisk + i));
                 }

@@ -26,7 +26,7 @@ public class FileWrite{
                 myWriter.newLine();
                 for(int i = currentDiskPosition; i < (currentJob.instructLength+currentDiskPosition);i++){
                     //System.out.println(Loader.disk[i]);
-                    myWriter.write(Loader.disk[i]);
+                    myWriter.write(OS.disk[i]);
                     myWriter.newLine();
                 }
 
@@ -37,7 +37,7 @@ public class FileWrite{
                 myWriter.newLine();
                 for(int i = currentDiskPosition; i < ((currentJob.getLength() - currentJob.instructLength)+currentDiskPosition);i++){
                     //System.out.println(Loader.disk[i]);
-                    myWriter.write(Loader.disk[i]);
+                    myWriter.write(OS.disk[i]);
                     myWriter.newLine();
                 }
                 currentDiskPosition += (currentJob.getLength() - currentJob.instructLength);

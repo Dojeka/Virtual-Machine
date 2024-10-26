@@ -10,7 +10,7 @@ public class Loader {
     static int outputLength;
     static int tempLength;
     static public PCB[] jobs;
-    public static String[] disk = new String[3000];
+
     static int diskCounter = 0;
     static int jobCounter = 0;
 
@@ -50,11 +50,11 @@ public class Loader {
         int readCounter = 0;
 
         try {
-            File plaintext = new File("C:\\Users\\domin\\IdeaProjects\\VirtualMachine\\src\\30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
+            File plaintext = new File("30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();
-                System.out.println(line);
+                //System.out.println(line);
                 if (line.contains("//")) {
                     FinishJob(line);
                     readType = JobPortion(line);
@@ -65,12 +65,12 @@ public class Loader {
                 } else {
                     switch (readType) {
                         case 0:
-                            disk[diskCounter] = line.replace("0x","");
+                            OS.disk[diskCounter] = line.replace("0x","");
                             diskCounter++;
                             readCounter++;
                             break;
                         case 1:
-                            disk[diskCounter] = line.replace("0x","");
+                            OS.disk[diskCounter] = line.replace("0x","");
                             diskCounter++;
                             readCounter++;
                             if (readCounter >= inputLength) {
@@ -79,7 +79,7 @@ public class Loader {
                             }
                             break;
                         default:
-                            disk[diskCounter] = "00000000";
+                            OS.disk[diskCounter] = "00000000";
                             diskCounter++;
                     }
                 }
@@ -95,7 +95,7 @@ public class Loader {
         return jobs;
     }
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         Load(30);
 
        for (int i = 0; i < disk.length; i++)
@@ -103,6 +103,8 @@ public class Loader {
        for(int i = 0; i < jobs.length; i++)
            System.out.println(jobs[i].getJobNumber());
     }
+
+    */
 
 
 }

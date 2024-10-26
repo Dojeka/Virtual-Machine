@@ -18,6 +18,9 @@ public class OS {
 
         //CPU portion
         CPU cpu = new CPU();
+        for(int i =0; i<disk.length; i++){
+            System.out.println("index: "+i+" "+disk[i]);
+        }
 
         //This while loop is needed because we can't just call the long term schedueler one time
         //since there isn't enough space in Ram to add all the jobs from disk to Ram in one run.
