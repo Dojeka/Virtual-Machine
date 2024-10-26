@@ -32,9 +32,6 @@ public class LTScheduler {
         }
 
         while(k < jobs.length && job.getLength() < totalOpenRamSpace) {
-           System.out.println("Open space at start of job: "+totalOpenRamSpace);
-            //System.out.println(job.getLength());
-
             if (job.getLength() + nextOpenSpace > 1024) {
                 nextOpenSpace = 0;
                 totalOpenRamSpace = 0;
@@ -48,8 +45,7 @@ public class LTScheduler {
 
             int instructionStartInDisk = job.jobBeginningInDisk;
 
-            //first add instructions of jobs to ram
-            System.out.println("Loading Job into RAM at index: " + nextOpenSpace);
+
             for (int i = 0; i < job.instructLength; i++) {
                 String instruction = Loader.disk[instructionStartInDisk + i];
                 //System.out.println("Loading instruction from disk: " + instruction);
@@ -92,9 +88,9 @@ public class LTScheduler {
             //Have a variable called total ram space that keeps track of total open indexes in ram that are available
             //As we add jobs the totalOpenRamSpace will decrease, once we don't have enough space to add to ram the while
             //Look fails, the Short term schedule will have to update the total open ram space whenever it removes a job
-            System.out.println("Job length: "+job.getLength());
+
             totalOpenRamSpace -= job.getLength();
-            System.out.println("Open space at end of job: "+totalOpenRamSpace );
+
 
             //Once the next job won't be able to fit in the end of ram,
             //Set the pointer back to the beginning of ram
@@ -118,13 +114,6 @@ public class LTScheduler {
 
 
         OS.RAM = ram;
-    }
-
-    public static void main(String[] args) {
-        Loader.Load(30);
-        LTScheduler scheduler = new LTScheduler();
-        scheduler.LongTermScheduler();
-
     }
 
 
