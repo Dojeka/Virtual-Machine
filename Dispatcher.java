@@ -15,6 +15,9 @@ public class Dispatcher {
 
 	public void removeJobFromRam(PCB cJ){
 		PCB currentJob = cJ;
+		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
+			OS.RAM[i] = "0";
+		}
 
 		//this just make sure the job is considered removed from RAM, it can be zeroed out or not
 		//it doesnt matter b/c the PCB contains the job beginning and end ensuring that the CPU doesn't
