@@ -37,7 +37,7 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("END")) {
-            long startTime = System.nanoTime();
+            long startTime = System.currentTimeMillis();
             jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber, startTime);
             jobCounter++;
         }
