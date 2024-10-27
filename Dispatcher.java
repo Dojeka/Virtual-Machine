@@ -33,7 +33,7 @@ public class Dispatcher {
 		LTScheduler.totalOpenRamSpace += currentJob.getLength();
 	}
 
-	public static int directMemoryAccess(int index, PCB currentJob){
+	public static int effectiveMemoryAddress(int index, PCB currentJob){
 		if(index>currentJob.getLength()){
 			index=  index/4;
 		}
