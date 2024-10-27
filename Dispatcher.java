@@ -37,6 +37,7 @@ public class Dispatcher {
 		if(index>currentJob.getLength()){
 			index=  index/4;
 		}
-		return currentJob.jobBeginningInRam + index;
+		int baseReg = currentJob.jobBeginningInRam;
+		return baseReg + index;
 	}
 }
