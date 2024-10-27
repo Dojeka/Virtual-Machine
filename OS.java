@@ -42,6 +42,7 @@ public class OS {
             dispatcher.saveToDisk(currentJob1);
             dispatcher.removeJobFromRam(currentJob1);
             currentJob++;
+            System.out.println("Avg Ram Space Used: "+(1024/currentJob1.getLength())+"%\n");
         }
         System.out.println("Avg wait time: "+CPU.avgWaitTime+" ns");
 
@@ -52,7 +53,6 @@ public class OS {
         //This file will change the document with the new information in the disk
         FileWrite.OverWrite();
 
-        System.out.println("\nMaxRam used: "+LTScheduler.maxRamSpaceUsed);
         System.out.println("\nEach jobs runtime:");
         long averageTime =0;
         for(int i =0; i<Loader.jobs.length; i++){

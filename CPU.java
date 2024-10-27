@@ -174,7 +174,7 @@ public class CPU {
         ioCounter = 0;
         long endTime = System.nanoTime()-startRun;
         currentJob.setJobEndingTime(endTime);
-        System.out.println();
+     
 
     }
 
