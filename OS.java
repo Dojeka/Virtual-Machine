@@ -43,6 +43,8 @@ public class OS {
             dispatcher.removeJobFromRam(currentJob1);
             currentJob++;
         }
+        System.out.println("Avg wait time: "+CPU.avgWaitTime+" ns");
+
         int avgIO = CPU.avgIOCounter / Loader.jobs.length;
         System.out.println("\nAverage I/O operations: "+avgIO);
 
@@ -54,11 +56,11 @@ public class OS {
         System.out.println("\nEach jobs runtime:");
         long averageTime =0;
         for(int i =0; i<Loader.jobs.length; i++){
-            System.out.println("Job #"+Loader.jobs[i].getJobNumber()+": "+Loader.jobs[i].getJobEndingTime());
+            System.out.println("Job #"+Loader.jobs[i].getJobNumber()+": "+Loader.jobs[i].getJobEndingTime()+" ns");
             averageTime += Loader.jobs[i].getJobEndingTime();
         }
         averageTime /= Loader.jobs.length;
-        System.out.println("Average: "+averageTime);
+        System.out.println("Average completion time: "+averageTime+" ns");
 
     }
 }

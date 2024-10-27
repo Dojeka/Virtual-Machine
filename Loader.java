@@ -37,7 +37,7 @@ public class Loader {
 
     public static void FinishJob(String line) {
         if (line.contains("END")) {
-            long startTime = System.currentTimeMillis();
+            long startTime = System.nanoTime();
             jobs[jobCounter] = new PCB(instructLength, priority, inputLength, outputLength, tempLength, diskCounter, jobNumber, startTime);
             jobCounter++;
         }
@@ -51,7 +51,7 @@ public class Loader {
         int readCounter = 0;
 
         try {
-            File plaintext = new File("C:\\Users\\domin\\IdeaProjects\\VirtualMachine\\src\\30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
+            File plaintext = new File("30-Jobs"); //Sorry, I changed the pathname to test it on my computer.
             Scanner reader = new Scanner(plaintext);
             while (reader.hasNextLine()) {
                 line = reader.nextLine();

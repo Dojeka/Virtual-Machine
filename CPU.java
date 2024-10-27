@@ -5,6 +5,7 @@ public class CPU {
     private boolean running;
     public static int ioCounter =0;
     public static int avgIOCounter = 0;
+    public static long avgWaitTime = 0;
 
     // 16 registers, reg-0 accumulator, reg-1 zero register
     private String[] registers;
@@ -90,8 +91,10 @@ public class CPU {
     // Main run loop
     public void run(PCB input) {
         //Get instructions and data of the current job
-        long waitTime = System.currentTimeMillis() - input.jobStartTime;
-        System.out.println("Waiting " + waitTime + " ms");
+        long waitTime = System.nanoTime() - input.jobStartTime;
+        long startRun = System.nanoTime();
+        avgWaitTime += waitTime;
+        System.out.println("Waiting time: " + waitTime + " ns");
         running = true;
 
         while (running) {
@@ -169,6 +172,9 @@ public class CPU {
         avgIOCounter += ioCounter;
         System.out.println("Job # I/O operations: "+CPU.ioCounter);
         ioCounter = 0;
+        long endTime = System.nanoTime()-startRun;
+        currentJob.setJobEndingTime(endTime);
+        System.out.println();
 
     }
 
