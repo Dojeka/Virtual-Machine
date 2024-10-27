@@ -23,7 +23,7 @@ public class Dispatcher {
 		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
 			OS.RAM[i] = "0";
 		}
-		long endTime = System.nanoTime()-currentJob.getJobStartTime();
+		long endTime = System.currentTimeMillis()-currentJob.getJobStartTime();
 		currentJob.setJobEndingTime(endTime);
 
 		//this just make sure the job is considered removed from RAM, it can be zeroed out or not

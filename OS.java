@@ -8,7 +8,7 @@ public class OS {
     
     public static void main(String[] args) {
         //Loader portion
-        Loader.Load(30);
+        Loader.Load(5);
 
         //LTScheduler sorts jobs into priority
         //When doing the FCFS, just don't call this
@@ -27,7 +27,7 @@ public class OS {
         //This while loop is needed because we can't just call the long term schedueler one time
         //since there isn't enough space in Ram to add all the jobs from disk to Ram in one run.
         while(currentJob < Loader.jobs.length){
-            System.out.println("OS: "+ currentJob);
+          //  System.out.println("Current job: "+ currentJob);
             PCB currentJob1 = Loader.jobs[currentJob];
 
             //move jobs from RAM to disk
@@ -41,9 +41,10 @@ public class OS {
             cpu.run(currentJob1);
             dispatcher.saveToDisk(currentJob1);
             dispatcher.removeJobFromRam(currentJob1);
-
             currentJob++;
         }
+        int avgIO = CPU.avgIOCounter / Loader.jobs.length;
+        System.out.println("\nAverage I/O operations: "+avgIO);
 
 
         //This file will change the document with the new information in the disk
