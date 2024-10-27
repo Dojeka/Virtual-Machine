@@ -2,15 +2,7 @@ import java.util.Scanner;
 
 public class CPU {
     private PCB currentJob;
-    private int inputBuffer;
-    private int outputBuffer;
     private boolean running;
-    private Scanner sc = new Scanner(System.in);
-
-
-    // 64-bit RAM
-
-
 
     // 16 registers, reg-0 accumulator, reg-1 zero register
     private String[] registers;
@@ -21,77 +13,19 @@ public class CPU {
     public CPU() {
         running = false;
         //Keep the instructions and data in RAM
-        int regCount = 0;
-        int count = 0;
-
-        /*
-        if(!(OS.RAM == null)) {
-            for (String s : OS.RAM) {
-                if (s == null){
-                    break;
-                }
-                //instructions in OS.RAM
-                if (s.contains("INST:")) {
-                    //substring to remove the INSTR: part
-                    for (int i = 0; i < OS.RAM.length; i++) {
-                        OS.RAM[i] = s.substring(5);
-                    }
-                    //data in OS.RAM
-                } else if (s.contains("DATA:")) {
-                    //Checks if OS.RAM full or memory empty
-                    if (regCount == 512) {
-                        break;
-                    } else {
-                        //substring to remove the DATA: part
-                        OS.RAM[regCount] = s.substring(5);
-                        regCount++;
-                    }
-                }
-            }
-            count++;
-        }
-        System.out.println("CPU-Instructions: ");
-        for (int i = 0; i < OS.RAM.length; i++){
-            System.out.println(OS.RAM[i]);
-        }
-
-        System.out.println("CPU-Data: ");
-        for (int i = 0; i < OS.RAM.length; i++){
-            System.out.println(OS.RAM[i]);
-        }
-        */
     }
 
 
     // Getters and setters
 
-
-    public String[] getRegisters() {
-        return registers;
-    }
-
     public void setRegisters(String[] registers) {
         this.registers = registers;
     }
 
-    public int getPC() {
-        return PC;
-    }
     public void setPC(int enteredPC){
         PC = enteredPC;
     }
 
-    public int getInputBuffer() {
-        return inputBuffer;
-    }
-
-    public void setInputBuffer(int inputBuffer) {
-        this.inputBuffer = inputBuffer;
-    }
-
-    public PCB getCurrentJob() {
-        return currentJob;
-    }
 
     public void setCurrentJob(PCB currentJob) {
         this.currentJob = currentJob;
@@ -112,10 +46,7 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
         int address = decode(OS.RAM[PC].substring(6));
-        if (address> currentJob.getLength()){
-            address = address/4;
-        }
-        System.out.println("address: " + address);
+        address = Dispatcher.directMemoryAccess(address, currentJob);
 
         switch (input) {
             case 0: // Read
@@ -151,14 +82,8 @@ public class CPU {
     // Main run loop
     public void run(PCB input) {
         //Get instructions and data of the current job
-        int instructions = input.instructLength;
-        int data = input.jobEndingInRam - input.instructLength;
-        int inputBuffer = input.jobInputBufferStartInRam;
-        int outputBuffer = input.jobOutputBufferStartInRam;
-
 
         running = true;
-        int count = input.jobBeginningInRam;
 
         while (running) {
             if (PC < 0 || PC >= input.jobInstructEndingInRam) {
@@ -232,7 +157,7 @@ public class CPU {
             }
             PC++;
         }
-        System.arraycopy(registers,0,OS.RAM,0,registers.length);
+
 
     }
 
@@ -240,10 +165,8 @@ public class CPU {
     void MOVI() {
         // Getting registers
         int regOne = decode(OS.RAM[PC].substring(2, 4));
-        int address = decode(OS.RAM[PC].substring(4));
-        System.out.println("addy; "+address);
+        int address = decode(OS.RAM[PC].substring(4,8));
         //address = address/4;
-        System.out.println("address: "+address);
         System.out.println("CPU-MOVI: Setting register "+regOne+" to given value");
         registers[regOne] = encode(address); // Store the immediate value into the register
     }
@@ -255,7 +178,6 @@ public class CPU {
         if (address> currentJob.getLength()){
             address = address/4;
         }
-        System.out.println("address: "+address);
         System.out.println("CPU-LDI: Setting register: "+ regOne);
         registers[regOne] = encode(address);
     }
@@ -264,11 +186,7 @@ public class CPU {
 
         int regOne = decode(OS.RAM[PC].substring(2,4));
         int address = decode(OS.RAM[PC].substring(4));
-        if (address> currentJob.getLength()){
-            address = address/4;
-        }
-        //address = address/4;
-        System.out.println("address: "+address);
+
         //adding the address data to the registers contents
         System.out.println("CPU-ADDI: Adding value to content in register " + regOne);
 
@@ -281,18 +199,15 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3,4));
         int address = decode(OS.RAM[PC].substring(5));
-        if (address> currentJob.getLength()){
-            address = address/4;
-        }
-        System.out.println("address: "+address);
 
         if (address != 0 && address <= OS.RAM.length) {
             System.out.println("ST: Storing register " + regOne + " value into address");
+            address =Dispatcher.directMemoryAccess(address,currentJob);
             OS.RAM[address] = registers[regOne];
         } else {
             System.out.println("ST: Storing register " + regOne + " value into location pointed to by register " + regTwo);
             int location = decode(registers[regTwo]);
-
+            location =Dispatcher.directMemoryAccess(location,currentJob);
             OS.RAM[location] = registers[regOne];
         }
     }
@@ -302,8 +217,7 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
         int regThree = decode(OS.RAM[PC].substring(4, 5));
-        System.out.println("Register: "+regOne+"="+registers[regOne]);
-        System.out.println("Register: "+regTwo+"="+registers[regTwo]);
+
         System.out.println("SLT: Comparing register " + regTwo + " and register " + regThree);
 
         if (decode(registers[regTwo]) < decode(registers[regThree])) {
@@ -318,18 +232,12 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
         int address = decode(OS.RAM[PC].substring(5));
-        if (address> currentJob.getLength()){
-            address = address/4;
-        }
-        System.out.println("Register: "+regOne+"="+registers[regOne]);
-        System.out.println("Register: "+regTwo+"="+registers[regTwo]);
 
-        System.out.println("address: "+address);
         System.out.println("CPU-BNE: Branching when register " + regOne + " and register " + regTwo + " are equal.");
         if (!(registers[regOne].equals(registers[regTwo]))) {
             System.out.println("CPU-BNE: Branching");
-            int Dest = address/4;
-            //PC = Dest;
+            int Dest =Dispatcher.directMemoryAccess(address,currentJob);
+            PC = Dest;
         }
     }
 
@@ -338,12 +246,10 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3,4));
         int address = decode(OS.RAM[PC].substring(5));
-        if (address> currentJob.getLength()){
-            address = address/4;
-        }
-        System.out.println("address: "+address);
+
         if (address > 0 && address < OS.RAM.length) {
             System.out.println("LW: Loading value from address " + address + " into register " + regTwo);
+            address =Dispatcher.directMemoryAccess(address,currentJob);
             registers[regTwo] = OS.RAM[address];
         } else {
             System.out.println("LW: Loading value from address in register " + regOne + " into register " + regTwo);
@@ -354,12 +260,9 @@ public class CPU {
     void ADD() {
         // Add the value of two registers and store in the destination register
         int regOne = decode(OS.RAM[PC].substring(3, 4));
-        System.out.println("Register 1: "+regOne);
         int regTwo = decode(OS.RAM[PC].substring(4, 5));
-        System.out.println("Register 2: "+regTwo);
         int regThree = decode(OS.RAM[PC].substring(5, 6));
-        System.out.println("Register 3: "+regThree);
-        System.out.println("Register 1 value: "+registers[regOne]);
+
         System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
         int result = decode(registers[regOne]) + decode(registers[regTwo]);
         registers[regThree] = encode(result);
@@ -389,4 +292,6 @@ public class CPU {
     void HLT(){
         running = false;
     }
+
+
 }

@@ -12,24 +12,31 @@ public class Dispatcher {
 	}
 
 	//Method to save current job to disk, will need the current Job PCB passed in
-	public void saveToDisk(PCB cJ){
-		PCB currentJob = cJ;
+	public void saveToDisk(PCB currentJob){
 		int k = currentJob.jobBeginningInDisk;
 		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
 			OS.disk[k] = OS.RAM[i];
 		}
 	}
 
-	public void removeJobFromRam(PCB cJ){
-		PCB currentJob = cJ;
+	public void removeJobFromRam(PCB currentJob){
 		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
 			OS.RAM[i] = "0";
 		}
+		long endTime = System.nanoTime()-currentJob.getJobStartTime();
+		currentJob.setJobEndingTime(endTime);
 
 		//this just make sure the job is considered removed from RAM, it can be zeroed out or not
 		//it doesnt matter b/c the PCB contains the job beginning and end ensuring that the CPU doesn't
 		//go out of bounds
 
 		LTScheduler.totalOpenRamSpace += currentJob.getLength();
+	}
+
+	public static int directMemoryAccess(int index, PCB currentJob){
+		if(index>currentJob.getLength()){
+			index=  index/4;
+		}
+		return currentJob.jobBeginningInRam + index;
 	}
 }

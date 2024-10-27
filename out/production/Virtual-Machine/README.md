@@ -1,6 +1,6 @@
 Jobs To-do:
 
-CPU ------- Dom, Angel
+CPU ------- Dom, Angel, john
 
 Loader --------- Isaac
 

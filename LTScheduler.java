@@ -37,11 +37,9 @@ public class LTScheduler {
             }
 
 
-
             job.setJobBeginningInRam(nextOpenSpace);
-            System.out.println("Job Begin :"+job.jobBeginningInRam);
             job.setjobInstructEndingInRam(nextOpenSpace + job.instructLength - 1);
-            System.out.println("Job End :"+job.jobInstructEndingInRam);
+
 
             int instructionStartInDisk = job.jobBeginningInDisk;
 
@@ -106,7 +104,7 @@ public class LTScheduler {
 
             k++;
 
-            if(k<1){
+            if(k<30){
                 job = jobs[k];
                 if (job.getLength() + nextOpenSpace > 1024) {
                     nextOpenSpace = 0;
