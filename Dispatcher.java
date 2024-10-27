@@ -3,6 +3,12 @@ public class Dispatcher {
 	public void loadJob(CPU cpu, PCB pcb){
 		// Set the PC to the job's beginning address in RAM
 		cpu.setPC(pcb.jobBeginningInRam);
+		cpu.setCurrentJob(pcb);
+		String [] a1 = new String[16];
+		for (int i = 0; i < 16; i++) {
+			a1[i] = "00000000"; // Initialize all elements to 10
+		}
+		cpu.setRegisters(a1);
 	}
 
 	//Method to save current job to disk, will need the current Job PCB passed in
