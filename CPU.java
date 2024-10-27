@@ -90,7 +90,8 @@ public class CPU {
     // Main run loop
     public void run(PCB input) {
         //Get instructions and data of the current job
-
+        long waitTime = System.currentTimeMillis() - input.jobStartTime;
+        System.out.println("Waiting " + waitTime + " ms");
         running = true;
 
         while (running) {
