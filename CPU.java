@@ -43,6 +43,12 @@ public class CPU {
         return Integer.toHexString(input).toUpperCase(); // Format to hex digits
     }
 
+    private int effectiveAddress(int baseReg, int indexRed, int displacement){
+        int baseAddress = decode(registers[baseReg]);
+        int indexAddress = indexRed >= 0 ? decode(registers[indexRed]): 0;
+        return baseAddress + indexAddress + displacement;
+    }
+
     // DMA operations
     public void DMA(int input) {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
