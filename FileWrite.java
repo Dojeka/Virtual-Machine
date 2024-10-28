@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Scanner;
 
 //This class is meant to change the file with the new information in the disk
 
@@ -9,7 +8,7 @@ public class FileWrite{
         PCB [] jobs =  Loader.jobs;
 
         try{
-            FileWriter fw = new FileWriter("Test.txt");
+            FileWriter fw = new FileWriter("Core-Dump.txt");
 
             BufferedWriter myWriter = new BufferedWriter(fw);
             int k = 0;
@@ -55,7 +54,4 @@ public class FileWrite{
 
     }
 
-    public static void main(String[] args){
-        FileWrite.OverWrite();
-    }
 }
