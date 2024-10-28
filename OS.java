@@ -7,28 +7,30 @@ public class OS {
 
     static LTScheduler lts = new LTScheduler();
 
-    static Dispatcher dispatcher = new Dispatcher();
+    static ShortTermScheduler shortTermScheduler = new ShortTermScheduler();
     
     public static void main(String[] args) {
         //Loader portion
         Scanner sc = new Scanner(System.in);
         System.out.println("Choose number of jobs to process: ");
         numJobs = sc.nextInt();
-        Loader.Load(numJobs);
-
-        //LTScheduler sorts jobs into priority
-        //When doing the FCFS, just don't call this
-        //lts.LTSpriorityQueue();
+        sc.nextLine();
+        System.out.println("Scheduling choice?(FCFS or PQ): ");
+        String choice = sc.nextLine();
+        if (choice.equalsIgnoreCase("PQ")) {
+            System.out.println("Implementing Priority Queue");
+            System.out.println();
+            Loader.Load(numJobs);
+            lts.LTSpriorityQueue();
+        }else{
+            Loader.Load(numJobs);
+        }
 
         int currentJob = 0;
 
         //CPU portion
         CPU cpu = new CPU();
-       /* for(int i =0; i<disk.length; i++){
-            System.out.println("index: "+i+" "+disk[i]);
-        }
 
-        */
 
         //This while loop is needed because we can't just call the long term schedueler one time
         //since there isn't enough space in Ram to add all the jobs from disk to Ram in one run.
@@ -43,10 +45,10 @@ public class OS {
             //Short term scheduler would then add the current job's info to the registers for the CPU
             //ShortTermScheduler.schedule
             
-            dispatcher.loadJob(cpu, currentJob1);
+            shortTermScheduler.dispatcher(cpu, currentJob1);
             cpu.run(currentJob1);
-            dispatcher.saveToDisk(currentJob1);
-            dispatcher.removeJobFromRam(currentJob1);
+            shortTermScheduler.saveToDisk(currentJob1);
+            shortTermScheduler.removeJobFromRam(currentJob1);
             currentJob++;
             System.out.println("Avg Ram Space Used: "+(1024/currentJob1.getLength())+"%\n");
         }

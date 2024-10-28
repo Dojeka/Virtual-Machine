@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class CPU {
     private PCB currentJob;
     private boolean running;
@@ -55,7 +53,7 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
         int address = decode(OS.RAM[PC].substring(6));
-        address = Dispatcher.effectiveMemoryAddress(address, currentJob);
+        address = ShortTermScheduler.effectiveMemoryAddress(address, currentJob);
         ioCounter ++ ;
         switch (input) {
             case 0: // Read
@@ -219,12 +217,12 @@ public class CPU {
 
         if (address != 0 && address <= OS.RAM.length) {
             //System.out.println("ST: Storing register " + regOne + " value into address");
-            address =Dispatcher.effectiveMemoryAddress(address,currentJob);
+            address = ShortTermScheduler.effectiveMemoryAddress(address,currentJob);
             OS.RAM[address] = registers[regOne];
         } else {
             //System.out.println("ST: Storing register " + regOne + " value into location pointed to by register " + regTwo);
             int location = decode(registers[regTwo]);
-            location =Dispatcher.effectiveMemoryAddress(location,currentJob);
+            location = ShortTermScheduler.effectiveMemoryAddress(location,currentJob);
             OS.RAM[location] = registers[regOne];
         }
     }
@@ -253,7 +251,7 @@ public class CPU {
        // System.out.println("CPU-BNE: Branching when register " + regOne + " and register " + regTwo + " are equal.");
         if (!(registers[regOne].equals(registers[regTwo]))) {
             //System.out.println("CPU-BNE: Branching");
-            int Dest =Dispatcher.effectiveMemoryAddress(address,currentJob);
+            int Dest = ShortTermScheduler.effectiveMemoryAddress(address,currentJob);
             PC = Dest;
         }
     }
@@ -266,7 +264,7 @@ public class CPU {
 
         if (address > 0 && address < OS.RAM.length) {
             //System.out.println("LW: Loading value from address " + address + " into register " + regTwo);
-            address =Dispatcher.effectiveMemoryAddress(address,currentJob);
+            address = ShortTermScheduler.effectiveMemoryAddress(address,currentJob);
             registers[regTwo] = OS.RAM[address];
         } else {
            // System.out.println("LW: Loading value from address in register " + regOne + " into register " + regTwo);

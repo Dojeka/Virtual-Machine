@@ -8,6 +8,6 @@ Long Term -------- John, Noor
 
 Short Term ------- Kahmin
 
-Dispatcher ----------- Brandon
+ShortTermScheduler ----------- Brandon
 
 OS ------------- Kahmin, Isaac, Dom

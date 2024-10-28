@@ -1,6 +1,6 @@
-public class Dispatcher {
+public class ShortTermScheduler {
 
-	public void loadJob(CPU cpu, PCB pcb){
+	public void dispatcher(CPU cpu, PCB pcb){
 		// Set the PC to the job's beginning address in RAM
 		cpu.setPC(pcb.jobBeginningInRam);
 		cpu.setCurrentJob(pcb);
@@ -21,13 +21,8 @@ public class Dispatcher {
 
 	public void removeJobFromRam(PCB currentJob){
 		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
-			OS.RAM[i] = "0";
+			OS.RAM[i] = "00000000";
 		}
-
-
-		//this just make sure the job is considered removed from RAM, it can be zeroed out or not
-		//it doesnt matter b/c the PCB contains the job beginning and end ensuring that the CPU doesn't
-		//go out of bounds
 
 		LTScheduler.totalOpenRamSpace += currentJob.getLength();
 	}

@@ -52,18 +52,6 @@ public class PCB {
         this.jobTempBufferStartInRam = jobTempBufferStartInRam;
     }
 
-    public int getJobEndingInRam() {
-        return jobEndingInRam;
-    }
-
-    public long getJobStartTime() {
-        return jobStartTime;
-    }
-
-    public void setJobStartTime(long jobStartTime) {
-        this.jobStartTime = jobStartTime;
-    }
-
     public long getJobEndingTime() {
         return jobEndingTime;
     }
