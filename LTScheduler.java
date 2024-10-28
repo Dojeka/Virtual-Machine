@@ -26,7 +26,7 @@ public class LTScheduler {
         //System.out.println(k);
         PCB job = null;
 
-        if (k<5) {
+        if (k<OS.numJobs) {
              job = jobs[k];
         }
 
@@ -104,7 +104,7 @@ public class LTScheduler {
 
             k++;
 
-            if(k<5){
+            if(k<OS.numJobs){
                 job = jobs[k];
                 if (job.getLength() + nextOpenSpace > 1024) {
                     nextOpenSpace = 0;

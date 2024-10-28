@@ -91,21 +91,5 @@ public class Loader {
         }
     }
 
-    // for jobs
-    public PCB[] getJobs() {
-        return jobs;
-    }
-
-   /* public static void main(String[] args) {
-        Load(30);
-
-       for (int i = 0; i < disk.length; i++)
-            System.out.println(disk[i]);
-       for(int i = 0; i < jobs.length; i++)
-           System.out.println(jobs[i].getJobNumber());
-    }
-
-    */
-
 
 }

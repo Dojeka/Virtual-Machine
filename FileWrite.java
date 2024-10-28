@@ -21,7 +21,7 @@ public class FileWrite{
             while( k < jobs.length){
                 currentJob = jobs[k];
 
-                String newJob = "// Job " + Integer.toHexString(currentJob.getJobNumber()).toUpperCase() +" "+ currentJob.instructLength;
+                String newJob = "// Job " + Integer.toHexString(currentJob.getJobNumber()).toUpperCase() +" "+ Integer.toHexString(currentJob.instructLength).toUpperCase()+" "+Integer.toHexString(currentJob.getPriority()).toUpperCase();
                 myWriter.write(newJob);
                 myWriter.newLine();
                 for(int i = currentDiskPosition; i < (currentJob.instructLength+currentDiskPosition);i++){
@@ -32,7 +32,7 @@ public class FileWrite{
 
                 currentDiskPosition += currentJob.instructLength;
 
-                String newData = "// Data " + currentJob.getJobNumber() +" "+ currentJob.instructLength;
+                String newData = "// Data " + Integer.toHexString(currentJob.inputLength).toUpperCase()+" "+ Integer.toHexString(currentJob.outputLength).toUpperCase()+" "+Integer.toHexString(currentJob.tempLength).toUpperCase();
                 myWriter.write(newData);
                 myWriter.newLine();
                 for(int i = currentDiskPosition; i < ((currentJob.getLength() - currentJob.instructLength)+currentDiskPosition);i++){

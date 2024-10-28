@@ -1,6 +1,9 @@
+import java.util.Scanner;
+
 public class OS {
     public static String [] disk = new String[2048];
     public static String [] RAM = new String[1024];
+    public static int numJobs;
 
     static LTScheduler lts = new LTScheduler();
 
@@ -8,7 +11,10 @@ public class OS {
     
     public static void main(String[] args) {
         //Loader portion
-        Loader.Load(5);
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Choose number of jobs to process: ");
+        numJobs = sc.nextInt();
+        Loader.Load(numJobs);
 
         //LTScheduler sorts jobs into priority
         //When doing the FCFS, just don't call this
