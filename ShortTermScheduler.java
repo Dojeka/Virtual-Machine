@@ -16,6 +16,7 @@ public class ShortTermScheduler {
 		int k = currentJob.jobBeginningInDisk;
 		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
 			OS.disk[k] = OS.RAM[i];
+			k++;
 		}
 	}
 
@@ -28,9 +29,10 @@ public class ShortTermScheduler {
 	}
 
 	public static int effectiveMemoryAddress(int index, PCB currentJob){
-		if(index>currentJob.getLength()){
-			index=  index/4;
-		}
+		index=  index/4;
+
+
+
 		int baseReg = currentJob.jobBeginningInRam;
 		return baseReg + index;
 	}

@@ -52,19 +52,21 @@ public class CPU {
     public void DMA(int input) {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
-        int address = decode(OS.RAM[PC].substring(6));
-        address = ShortTermScheduler.effectiveMemoryAddress(address, currentJob);
+        int address = decode(OS.RAM[PC].substring(4));
         ioCounter ++ ;
         switch (input) {
             case 0: // Read
                 //System.out.println("CPU-DMA Read");
                 if (address != 0 && address < OS.RAM.length) {
                     //System.out.println("CPU-Transferring from memory to Register " + regOne);
+                    address = ShortTermScheduler.effectiveMemoryAddress(address, currentJob);
                     registers[regOne] = OS.RAM[address]; // Read from RAM to register 1
-                    OS.RAM[address] = "00000000"; //Empty register after transferring data
+                    //OS.RAM[address] = "00000000"; //Empty register after transferring data
                 } else {
                     //System.out.println("CPU-Transferring data pointed to by Register " + regTwo + " into Register " + regOne);
-                    registers[regOne] =  OS.RAM[regTwo];
+                    int addyRegTwo = decode(registers[regTwo]);
+                    address = ShortTermScheduler.effectiveMemoryAddress(addyRegTwo, currentJob);
+                    registers[regOne] =  OS.RAM[address];
                     //OS.RAM[regTwo] = "00000000";
                 }
 
@@ -74,10 +76,13 @@ public class CPU {
                 //System.out.println("CPU-DMA Write");
                 if (address != 0 && address < OS.RAM.length) {
                     //System.out.println("CPU-Transferring from register " + regOne + " into memory at address");
+                    address = ShortTermScheduler.effectiveMemoryAddress(address, currentJob);
                     OS.RAM[address] = registers[regOne];
                 } else {
                     //System.out.println("CPU-Transferring from register " + regOne + " into memory at " + regTwo);
-                    OS.RAM[regTwo] = registers[regOne];
+                    int addyRegTwo = decode(registers[regTwo]);
+                    address = ShortTermScheduler.effectiveMemoryAddress(addyRegTwo, currentJob);
+                    OS.RAM[address] = registers[regOne];
                 }
                 registers[regOne] = "00000000";
 
@@ -100,7 +105,7 @@ public class CPU {
                 running = false; // Stop execution
                 break;
             }
-           // System.out.println("\n"+PC);
+            // System.out.println("\n"+PC);
             String op = OS.RAM[PC];
 
             //System.out.println("Working on instruction: " + op);
@@ -180,7 +185,7 @@ public class CPU {
     void MOVI() {
         // Getting registers
         int regOne = decode(OS.RAM[PC].substring(2, 4));
-        int address = decode(OS.RAM[PC].substring(4,8));
+        int address = decode(OS.RAM[PC].substring(4));
         //address = address/4;
         //System.out.println("CPU-MOVI: Setting register "+regOne+" to given value");
         registers[regOne] = encode(address); // Store the immediate value into the register
@@ -190,9 +195,6 @@ public class CPU {
 
         int regOne = decode(OS.RAM[PC].substring(2,4));
         int address = decode(OS.RAM[PC].substring(4));
-        if (address> currentJob.getLength()){
-            address = address/4;
-        }
         //System.out.println("CPU-LDI: Setting register: "+ regOne);
         registers[regOne] = encode(address);
     }
@@ -209,11 +211,12 @@ public class CPU {
 
         registers[regOne] = encode(results);
     }
+
     void ST() {
         // Store the value from a register into RAM
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3,4));
-        int address = decode(OS.RAM[PC].substring(5));
+        int address = decode(OS.RAM[PC].substring(4));
 
         if (address != 0 && address <= OS.RAM.length) {
             //System.out.println("ST: Storing register " + regOne + " value into address");
@@ -233,7 +236,7 @@ public class CPU {
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
         int regThree = decode(OS.RAM[PC].substring(4, 5));
 
-       // System.out.println("SLT: Comparing register " + regTwo + " and register " + regThree);
+        // System.out.println("SLT: Comparing register " + regTwo + " and register " + regThree);
 
         if (decode(registers[regTwo]) < decode(registers[regThree])) {
             registers[regOne] = encode(1); // Set to 1 if regTwo < regThree
@@ -246,10 +249,11 @@ public class CPU {
         // Branches when register 1 and 2 are equal
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
-        int address = decode(OS.RAM[PC].substring(5));
-
-       // System.out.println("CPU-BNE: Branching when register " + regOne + " and register " + regTwo + " are equal.");
-        if (!(registers[regOne].equals(registers[regTwo]))) {
+        int address = decode(OS.RAM[PC].substring(4));
+        int rs1 = decode(registers[regOne]);
+        int rs2 = decode(registers[regTwo]);
+        // System.out.println("CPU-BNE: Branching when register " + regOne + " and register " + regTwo + " are equal.");
+        if (rs1 != rs2) {
             //System.out.println("CPU-BNE: Branching");
             int Dest = ShortTermScheduler.effectiveMemoryAddress(address,currentJob);
             PC = Dest;
@@ -260,27 +264,29 @@ public class CPU {
         // Load Word: Load value from memory into a register
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3,4));
-        int address = decode(OS.RAM[PC].substring(5));
+        int address = decode(OS.RAM[PC].substring(4));
 
         if (address > 0 && address < OS.RAM.length) {
             //System.out.println("LW: Loading value from address " + address + " into register " + regTwo);
             address = ShortTermScheduler.effectiveMemoryAddress(address,currentJob);
             registers[regTwo] = OS.RAM[address];
         } else {
-           // System.out.println("LW: Loading value from address in register " + regOne + " into register " + regTwo);
-            registers[regTwo] = OS.RAM[regOne];
+            // System.out.println("LW: Loading value from address in register " + regOne + " into register " + regTwo);
+            int value = decode(registers[regOne]);
+            address = ShortTermScheduler.effectiveMemoryAddress(value,currentJob);
+            registers[regTwo] = OS.RAM[address];
         }
     }
 
     void ADD() {
         // Add the value of two registers and store in the destination register
-        int regOne = decode(OS.RAM[PC].substring(3, 4));
-        int regTwo = decode(OS.RAM[PC].substring(4, 5));
-        int regThree = decode(OS.RAM[PC].substring(5, 6));
+        int regOne = decode(OS.RAM[PC].substring(2, 3));
+        int regTwo = decode(OS.RAM[PC].substring(3, 4));
+        int regThree = decode(OS.RAM[PC].substring(4, 5));
 
-       // System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
-        int result = decode(registers[regOne]) + decode(registers[regTwo]);
-        registers[regThree] = encode(result);
+        // System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
+        int result = decode(registers[regTwo]) + decode(registers[regThree]);
+        registers[regOne] = encode(result);
     }
 
     void MOV() {
@@ -288,7 +294,7 @@ public class CPU {
         int regOne = decode(OS.RAM[PC].substring(2, 3));
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
 
-       // System.out.println("MOV: Moving value from register " + regTwo + " to register " + regOne);
+        // System.out.println("MOV: Moving value from register " + regTwo + " to register " + regOne);
         registers[regOne] = registers[regTwo];
         registers[regTwo] = "00000000";
     }
@@ -299,7 +305,7 @@ public class CPU {
         int regTwo = decode(OS.RAM[PC].substring(3, 4));
         int regThree = decode(OS.RAM[PC].substring(4, 5));
 
-       // System.out.println("DIV: Dividing register " + regTwo + " by register " + regThree);
+        // System.out.println("DIV: Dividing register " + regTwo + " by register " + regThree);
         int results = decode(registers[regTwo]) / decode(registers[regThree]);
         registers[regOne] = encode(results);
     }
