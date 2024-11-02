@@ -61,13 +61,13 @@ public class CPU {
                     //System.out.println("CPU-Transferring from memory to Register " + regOne);
                     address = ShortTermScheduler.effectiveMemoryAddress(address, currentJob);
                     registers[regOne] = OS.RAM[address]; // Read from RAM to register 1
-                    //OS.RAM[address] = "00000000"; //Empty register after transferring data
+                    OS.RAM[address] = "00000000"; //Empty register after transferring data
                 } else {
                     //System.out.println("CPU-Transferring data pointed to by Register " + regTwo + " into Register " + regOne);
                     int addyRegTwo = decode(registers[regTwo]);
                     address = ShortTermScheduler.effectiveMemoryAddress(addyRegTwo, currentJob);
                     registers[regOne] =  OS.RAM[address];
-                    //OS.RAM[regTwo] = "00000000";
+                    OS.RAM[address] = "00000000";
                 }
 
                 break;
@@ -84,7 +84,7 @@ public class CPU {
                     address = ShortTermScheduler.effectiveMemoryAddress(addyRegTwo, currentJob);
                     OS.RAM[address] = registers[regOne];
                 }
-                registers[regOne] = "00000000";
+                //registers[regOne] = "00000000";
 
                 break;
         }
@@ -101,10 +101,7 @@ public class CPU {
         running = true;
 
         while (running) {
-            if (PC < 0 || PC >= input.jobInstructEndingInRam) {
-                running = false; // Stop execution
-                break;
-            }
+
             // System.out.println("\n"+PC);
             String op = OS.RAM[PC];
 
@@ -170,7 +167,9 @@ public class CPU {
                     running = false; // Stop if unknown opcode
                     break;
             }
-            PC++;
+            if(!opcde.equals("56")){
+                PC++;
+            }
         }
         avgIOCounter += ioCounter;
         System.out.println("Job # I/O operations: "+CPU.ioCounter);
@@ -238,10 +237,10 @@ public class CPU {
 
         // System.out.println("SLT: Comparing register " + regTwo + " and register " + regThree);
 
-        if (decode(registers[regTwo]) < decode(registers[regThree])) {
-            registers[regOne] = encode(1); // Set to 1 if regTwo < regThree
+        if (decode(registers[regOne]) < decode(registers[regTwo])) {
+            registers[regThree] = encode(1); // Set to 1 if regTwo < regThree
         } else {
-            registers[regOne] = encode(0); // Set to 0 otherwise
+            registers[regThree] = encode(0); // Set to 0 otherwise
         }
     }
 
@@ -257,6 +256,9 @@ public class CPU {
             //System.out.println("CPU-BNE: Branching");
             int Dest = ShortTermScheduler.effectiveMemoryAddress(address,currentJob);
             PC = Dest;
+        }
+        else{
+            PC++;
         }
     }
 
@@ -285,8 +287,8 @@ public class CPU {
         int regThree = decode(OS.RAM[PC].substring(4, 5));
 
         // System.out.println("ADD: Adding register " + regOne + " and register " + regTwo);
-        int result = decode(registers[regTwo]) + decode(registers[regThree]);
-        registers[regOne] = encode(result);
+        int result = decode(registers[regOne]) + decode(registers[regTwo]);
+        registers[regThree] = encode(result);
     }
 
     void MOV() {
@@ -296,7 +298,7 @@ public class CPU {
 
         // System.out.println("MOV: Moving value from register " + regTwo + " to register " + regOne);
         registers[regOne] = registers[regTwo];
-        registers[regTwo] = "00000000";
+        //registers[regTwo] = "00000000";
     }
 
     void DIV() {

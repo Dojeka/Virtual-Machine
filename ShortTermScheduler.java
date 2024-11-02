@@ -14,7 +14,7 @@ public class ShortTermScheduler {
 	//Method to save current job to disk, will need the current Job PCB passed in
 	public void saveToDisk(PCB currentJob){
 		int k = currentJob.jobBeginningInDisk;
-		for(int i = currentJob.jobBeginningInRam; i < currentJob.getLength(); i++){
+		for(int i = currentJob.jobBeginningInRam; i < (currentJob.jobBeginningInRam+currentJob.getLength()); i++){
 			OS.disk[k] = OS.RAM[i];
 			k++;
 		}
